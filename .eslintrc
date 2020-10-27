@@ -8,5 +8,7 @@
     "plugin:@typescript-eslint/recommended" // Uses the recommended rules from the @typescript-eslint/eslint-plugin
   ],
   "rules": {
+    "semi": "error",
+    "quotes": ["error", "single"]
   }
 }

@@ -1,4 +1,4 @@
-class EventEmitter {
+export class EventEmitter {
   private events: any = {};
 
   on(eventName: string, callback: (...args: any) => void) {
@@ -9,15 +9,15 @@ class EventEmitter {
     }
   }
 
-  emit(eventName: string, ...args) {
+  emit(eventName: string, ...args: any[]) {
     if (this.events[eventName]) {
-      this.events[eventName].forEach(cb => cb(...args));
+      this.events[eventName].forEach((cb: any) => cb(...args));
     }
   }
 
   removeListener(eventName: string, callback: () => any) {
     if (this.events[eventName]) {
-      this.events[eventName] = this.events[eventName].filter(eventCallback => eventCallback !== callback)
+      this.events[eventName] = this.events[eventName].filter((eventCallback: any) => eventCallback !== callback);
     }
   }
 } 

@@ -1,4 +1,4 @@
-abstract class Creator {
+export abstract class Creator {
   public abstract factoryMethod(): Product;
 
   public doSomething(): string {

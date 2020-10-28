@@ -1,4 +1,4 @@
-abstract class Dialog {
+export abstract class Dialog {
   /* Factory method */
   public abstract createButton(): Button;
   /** 
@@ -49,7 +49,7 @@ class MobileButton implements Button {
     console.log('Default click handler');
   }
 
-  public onClick(callback) {
+  public onClick(callback: any) {
     this.click = callback;
   }
 }
@@ -63,7 +63,7 @@ class WebButton implements Button {
     console.log('Default click handler');
   }
 
-  public onClick(callback) {
+  public onClick(callback: any) {
     this.click = callback;
   }
 }

@@ -3,7 +3,7 @@ import { ISubject, IObserver } from './index';
 class NewsLetter implements ISubject {
   private paperTitle: string;
 
-  public editions = []; /* Subject state */
+  public editions: string[] = []; /* Subject state */
 
   private observers: IObserver[] = [];
 
@@ -28,7 +28,7 @@ class NewsLetter implements ISubject {
   public notify(): void {
     this.observers.forEach(subscribedObserver => {
       subscribedObserver.update(this);
-    })
+    });
   }
 
   public issueNewEdition(editionTitle: string): void {

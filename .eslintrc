@@ -7,7 +7,6 @@
   },
   "plugins": ["react", "@typescript-eslint"],
   "extends": [
-    "airbnb-typescript",
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {

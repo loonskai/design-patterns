@@ -9,7 +9,7 @@ export interface IObserver {
 }
 
 class ConcreteSubject implements ISubject {
-  public state: number;
+  public state = 0;
 
   private observers: IObserver[] = [];
 
@@ -30,7 +30,7 @@ class ConcreteSubject implements ISubject {
   public notify(): void {
     this.observers.forEach(subscribedObserver => {
       subscribedObserver.update(this);
-    })
+    });
   }
 
   public setRandomInt(min: number, max: number): void {
@@ -79,7 +79,7 @@ subject.setRandomInt(0, 5);
 subject.setRandomInt(0, 5);
 
 console.log('** detach secondObserver **');
-subject.detach(secondObserver)
+subject.detach(secondObserver);
 
 subject.setRandomInt(0, 5);
 subject.setRandomInt(0, 5);

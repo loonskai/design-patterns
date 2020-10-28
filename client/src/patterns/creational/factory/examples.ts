@@ -1,5 +1,5 @@
 /* Objects factory */
-function userFactory(name, group, email) {
+export function userFactory(name: any, group: any, email: any) {
   return { name, group, email };
 }
 
@@ -10,11 +10,13 @@ const colors = {
   error: '\x1b[0;31m',
 };
 
-function logger(type = 'info') {
+type TYPES = 'info' | 'warning' | 'error';
+
+function logger(type: TYPES) {
   const color = colors[type];
   const date = new Date().toISOString();
 
-  return str => {
+  return (str: string) => {
     console.log(`${color}${date}\t${str}`);
   };
 }
@@ -28,11 +30,11 @@ logInfo('Some information');
 class Person {
   name: string;
 
-  constructor(name) {
+  constructor(name: string) {
     this.name = name;
   }
 
-  static createPerson(name) {
+  static createPerson(name: string) {
     return new Person(name);
   }
 }

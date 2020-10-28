@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { GUIAbstractFactory, WinUIFactory, MacUIFactory } from '../patterns/creational/abstract-factory';
+import { GUIAbstractFactory, PlatformButton } from '../patterns/creational/abstract-factory';
+import { WinUIFactory } from '../patterns/creational/abstract-factory/WinUIFactory';
+import { MacUIFactory } from '../patterns/creational/abstract-factory/MacUIFactory';
 
 const PLATFORM_TYPES = {
   MACOS: 'MACOS',
@@ -9,6 +11,7 @@ const PLATFORM_TYPES = {
 export default function AbstractFactoryPage(): JSX.Element {
   const [platform, setPlatform] = useState(PLATFORM_TYPES.MACOS);
   const [factory, setFactory] = useState<GUIAbstractFactory | null>(null);
+  const [buttons, setButtons] = useState<PlatformButton[]>([]);
 
   useEffect(() => {
     switch (platform) {
@@ -22,11 +25,13 @@ export default function AbstractFactoryPage(): JSX.Element {
       }
       default: throw new Error('Unsupported platform');
     }
-  }, []);
+  }, [platform]);
 
   const createUI = () => {
-    const newButton = factory?.createButton();
-    newButton?.handleClick();
+    if (factory) {
+      const newButton = factory?.createButton();
+      setButtons([...buttons, newButton]);
+    }
   };
 
   return (
@@ -38,6 +43,10 @@ export default function AbstractFactoryPage(): JSX.Element {
           <option value={PLATFORM_TYPES.WINDOWS}>{PLATFORM_TYPES.WINDOWS}</option>
         </select>
         <button type="button" onClick={createUI} defaultValue={platform}>Create UI</button>
+      </div>
+      <div>
+        Items:
+        {buttons.map(button => button.paint())}
       </div>
     </div>
   );

@@ -1,11 +1,8 @@
 import React from 'react';
+import Router from './Router';
 
-function App() {
-  return (
-    <div>
-      Design Patterns App
-    </div>
-  );
+function App(): JSX.Element {
+  return <Router />;
 }
 
 export default App;

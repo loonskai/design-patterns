@@ -8,6 +8,7 @@ export default function Navigation(): JSX.Element {
         <ul>
           <li><NavLink to="/">Home</NavLink></li>
           <li><NavLink to="/abstract-factory">Abstract Factory</NavLink></li>
+          <li><NavLink to="/builder">Builder</NavLink></li>
         </ul>
       </nav>
     </header>

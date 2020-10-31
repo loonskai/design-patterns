@@ -3,8 +3,7 @@ services:
   mongo:
     image: 'mongo'
     environment:
-      MONGO_INITDB_ROOT_USERNAME: randomuser
-      MONGO_INITDB_ROOT_PASSWORD: randompassword
+      MONGO_INITDB_DATABASE: randomdatabase
     ports:
       - 27018:27017
     volumes:

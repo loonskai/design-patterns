@@ -11,6 +11,7 @@
   ],
   "rules": {
     "semi": "error",
-    "quotes": ["error", "single"]
+    "quotes": ["error", "single"],
+    "@typescript-eslint/no-empty-function": 0
   }
 }

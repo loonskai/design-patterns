@@ -8,6 +8,7 @@ import Navigation from './components/Navigation';
 import HomePage from './pages/HomePage';
 import AbstractFactoryPage from './pages/AbstractFactoryPage';
 import BuilderPage from './pages/BuilderPage';
+import SingletonPage from './pages/SingletonPage';
 
 export default function Router(): JSX.Element {
   return (
@@ -22,6 +23,9 @@ export default function Router(): JSX.Element {
         </Route>
         <Route path="/builder">
           <BuilderPage />
+        </Route>
+        <Route path="/singleton">
+          <SingletonPage />
         </Route>
       </Switch>
     </BrowserRouter>

@@ -10,6 +10,7 @@ export default function Navigation(): JSX.Element {
           <li><NavLink to="/abstract-factory">Abstract Factory</NavLink></li>
           <li><NavLink to="/builder">Builder</NavLink></li>
           <li><NavLink to="/singleton">Singleton</NavLink></li>
+          <li><NavLink to="/adapter">Adapter</NavLink></li>
         </ul>
       </nav>
     </header>

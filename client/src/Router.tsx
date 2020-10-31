@@ -9,6 +9,7 @@ import HomePage from './pages/HomePage';
 import AbstractFactoryPage from './pages/AbstractFactoryPage';
 import BuilderPage from './pages/BuilderPage';
 import SingletonPage from './pages/SingletonPage';
+import AdapterPage from './pages/AdapterPage';
 
 export default function Router(): JSX.Element {
   return (
@@ -26,6 +27,9 @@ export default function Router(): JSX.Element {
         </Route>
         <Route path="/singleton">
           <SingletonPage />
+        </Route>
+        <Route path="/adapter">
+          <AdapterPage />
         </Route>
       </Switch>
     </BrowserRouter>

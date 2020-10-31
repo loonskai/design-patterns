@@ -1,23 +1,50 @@
-interface Adaptee {
-  coll(): any;
+import { IndexedDBStorage } from './IndexedDBStorage';
+import { MongoStorage } from './MongoStorage';
+
+export enum StorageTypes {
+  MONGO = 'MONGO',
+  INDEXEDDB = 'INDEXEDDB'
 }
 
-class Adaptee implements Adaptee {
-  coll() {
-    console.log('from Adaptee');
-  }
+type StorageAssignee = MongoStorage | IndexedDBStorage;
+
+interface StorageInterface {
+  getAll(): Promise<string[]>;
+  add(value: string): void;
+  delete(value: string): void;
 }
 
-export class Adapter {
-  private adaptee: Adaptee; // or subject
+export class StorageAdapter implements StorageInterface {
+  private asignee: StorageAssignee;
 
-  constructor(adaptee: Adaptee) {
-    this.adaptee = adaptee;
+  /* Takes asignee instance by default */
+  constructor(asigneeType: string, storageName: string) {
+    switch (asigneeType) {
+      case StorageTypes.INDEXEDDB:
+        this.asignee = new IndexedDBStorage(storageName);
+        break;
+      case StorageTypes.MONGO:
+        this.asignee = new MongoStorage(storageName);
+        break;
+      default:
+        throw new Error('Unknown storage type');
+    }
   }
 
-  call(): void {
-    this.adaptee.coll();
+  async getAll(): Promise<string[]> {
+    if (this.asignee instanceof IndexedDBStorage) {
+      return await this.asignee.getAllRows();
+    }
+    return [];
+  }
+
+  async add(value: string): Promise<void> {
+    if (this.asignee instanceof IndexedDBStorage) {
+      this.asignee.createRow(value);
+    }
+  }
+
+  delete(value: string) {
+
   }
 }
-
-export const adapter = new Adapter(new Adaptee());

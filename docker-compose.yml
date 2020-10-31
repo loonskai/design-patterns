@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  mongo:
+    image: 'mongo'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: randomuser
+      MONGO_INITDB_ROOT_PASSWORD: randompassword
+    ports:
+      - 27018:27017
+    volumes:
+      - mongodb_data_container:/data/db
+  express-server:
+    build:
+      context: .
+      dockerfile: ./express-server/Dockerfile
+    volumes:
+      - .:/app:delegated
+    ports:
+      - 5000:5000
+    depends_on:
+      - mongo
+  client:
+    image: 'node:14.15.0-stretch'
+    working_dir: /app
+    volumes:
+      - .:/app:delegated
+    command: "npm start"
+    ports:
+      - 3000:3000
+    depends_on:
+      - express-server
+volumes:
+  mongodb_data_container:

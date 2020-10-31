@@ -1,5 +1,3 @@
-
-
 const path = require('path');
 const fs = require('fs');
 const getPublicUrlOrPath = require('react-dev-utils/getPublicUrlOrPath');
@@ -58,7 +56,7 @@ module.exports = {
   appIndexJs: resolveModule(resolveApp, 'client/src/index'),
   appPackageJson: resolveApp('package.json'),
   appSrc: resolveApp('client/src'),
-  appTsConfig: resolveApp('tsconfig.json'),
+  appTsConfig: resolveApp('client/tsconfig.json'),
   appJsConfig: resolveApp('jsconfig.json'),
   yarnLockFile: resolveApp('yarn.lock'),
   testsSetup: resolveModule(resolveApp, 'client/src/setupTests'),

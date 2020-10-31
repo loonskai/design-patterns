@@ -1,0 +1,5 @@
+{
+  "watch": "./",
+  "ext": "ts",
+  "exec": "ts-node --project ./express-server/tsconfig.json ./express-server/index.ts"
+}

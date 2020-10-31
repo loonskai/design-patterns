@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+     "target": "es2017",
+     "module": "commonjs",
+     "lib": ["es2017", "es2019"],
+     "moduleResolution": "node",
+     "removeComments": true,
+     "noImplicitAny": true,
+     "strictNullChecks": true,
+     "noImplicitThis": true,
+     "emitDecoratorMetadata": true,
+     "esModuleInterop": true,
+     "experimentalDecorators": true,
+     "sourceMap": true,
+  }
+}

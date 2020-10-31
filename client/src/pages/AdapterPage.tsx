@@ -16,7 +16,7 @@ export default function AdapterPage(): JSX.Element {
   };
   
   useEffect(() => {
-    setStorage(new StorageAdapter(storageType, 'todo-list'));
+    setStorage(new StorageAdapter(storageType));
   }, [storageType]);
 
   useEffect(() => {

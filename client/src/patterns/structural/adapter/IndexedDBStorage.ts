@@ -9,12 +9,10 @@ interface TodoDB extends DBSchema {
 }
 
 export class IndexedDBStorage {
-  private dbName: string;
   private dbPromise: Promise<IDBPDatabase<TodoDB>>;
 
-  constructor(dbName: string) {
-    this.dbName = dbName;
-    this.dbPromise = openDB<TodoDB>(this.dbName, undefined, {
+  constructor() {
+    this.dbPromise = openDB<TodoDB>('todo-list', undefined, {
       upgrade: db => {
         if (!db.objectStoreNames.contains('todo-list')) {
           const store = db.createObjectStore('todo-list', { autoIncrement: true });

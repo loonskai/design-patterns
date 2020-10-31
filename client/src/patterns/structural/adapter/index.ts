@@ -18,13 +18,13 @@ export class StorageAdapter implements StorageInterface {
   private asignee: StorageAssignee;
 
   /* Takes asignee instance by default */
-  constructor(asigneeType: string, storageName: string) {
+  constructor(asigneeType: string) {
     switch (asigneeType) {
       case StorageTypes.INDEXEDDB:
-        this.asignee = new IndexedDBStorage(storageName);
+        this.asignee = new IndexedDBStorage();
         break;
       case StorageTypes.MONGO:
-        this.asignee = new MongoStorage(storageName);
+        this.asignee = new MongoStorage();
         break;
       default:
         throw new Error('Unknown storage type');
@@ -35,12 +35,18 @@ export class StorageAdapter implements StorageInterface {
     if (this.asignee instanceof IndexedDBStorage) {
       return await this.asignee.getAllRows();
     }
+    if (this.asignee instanceof MongoStorage) {
+      return await this.asignee.fetchAll();
+    }
     return [];
   }
 
   async add(value: string): Promise<void> {
     if (this.asignee instanceof IndexedDBStorage) {
       this.asignee.createRow(value);
+    }
+    if (this.asignee instanceof MongoStorage) {
+      this.asignee.post(value);
     }
   }
 

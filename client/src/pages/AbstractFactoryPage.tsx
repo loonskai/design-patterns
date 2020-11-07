@@ -15,15 +15,15 @@ export default function AbstractFactoryPage(): JSX.Element {
 
   useEffect(() => {
     switch (platform) {
-      case PLATFORM_TYPES.MACOS: {
-        setFactory(new MacUIFactory());
-        break;
-      }
-      case PLATFORM_TYPES.WINDOWS: {
-        setFactory(new WinUIFactory());
-        break;
-      }
-      default: throw new Error('Unsupported platform');
+    case PLATFORM_TYPES.MACOS: {
+      setFactory(new MacUIFactory());
+      break;
+    }
+    case PLATFORM_TYPES.WINDOWS: {
+      setFactory(new WinUIFactory());
+      break;
+    }
+    default: throw new Error('Unsupported platform');
     }
   }, [platform]);
 

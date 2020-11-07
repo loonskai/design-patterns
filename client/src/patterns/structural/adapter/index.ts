@@ -20,14 +20,14 @@ export class StorageAdapter implements StorageInterface {
   /* Takes asignee instance by default */
   constructor(asigneeType: string) {
     switch (asigneeType) {
-      case StorageTypes.INDEXEDDB:
-        this.asignee = new IndexedDBStorage();
-        break;
-      case StorageTypes.MONGO:
-        this.asignee = new MongoStorage();
-        break;
-      default:
-        throw new Error('Unknown storage type');
+    case StorageTypes.INDEXEDDB:
+      this.asignee = new IndexedDBStorage();
+      break;
+    case StorageTypes.MONGO:
+      this.asignee = new MongoStorage();
+      break;
+    default:
+      throw new Error('Unknown storage type');
     }
   }
 

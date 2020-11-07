@@ -10,6 +10,7 @@ import AbstractFactoryPage from './pages/AbstractFactoryPage';
 import BuilderPage from './pages/BuilderPage';
 import SingletonPage from './pages/SingletonPage';
 import AdapterPage from './pages/AdapterPage';
+import BridgePage from './pages/BridgePage';
 
 export default function Router(): JSX.Element {
   return (
@@ -30,6 +31,9 @@ export default function Router(): JSX.Element {
         </Route>
         <Route path="/adapter">
           <AdapterPage />
+        </Route>
+        <Route path="/bridge">
+          <BridgePage />
         </Route>
       </Switch>
     </BrowserRouter>

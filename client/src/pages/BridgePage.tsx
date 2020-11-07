@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { FormatTypes, ReportTypes } from '../patterns/structural/bridge';
 import { ReportForm } from '../components/pattern-pages/bridge/ReportForm';
 import { FormItemElement, FormValues, NumberOptionsMapping } from '../components/pattern-pages/bridge/types';
+import { YearlyReport, MonthlyReport, DailyReport } from '../patterns/structural/bridge/reports';
+import { PDFDocument, ExcelDocument, WordDocument } from '../patterns/structural/bridge/documents';
 
 const initialValues = {
   'first-name': '',
@@ -18,9 +20,21 @@ const DAYS_OPTIONS_MAPPING: NumberOptionsMapping = {
   [ReportTypes.DAILY]: [1]
 };
 
+const REPORT_TYPE_ABSTRACTIONS = {
+  [ReportTypes.YEARLY]: YearlyReport,
+  [ReportTypes.MONTHLY]: MonthlyReport,
+  [ReportTypes.DAILY]: DailyReport
+};
+
+const DOCUMENT_FORMAT_IMPLEMENTATIONS = {
+  [FormatTypes.PDF]: PDFDocument,
+  [FormatTypes.EXCEL]: ExcelDocument,
+  [FormatTypes.WORD]: WordDocument,
+};
+
 export default function BridgePage(): JSX.Element {
-  const [format, setFormat] = useState<string>(FormatTypes.PDF);
-  const [reportType, setReportType] = useState<string>(ReportTypes.YEARLY);
+  const [format, setFormat] = useState<FormatTypes>(FormatTypes.PDF);
+  const [reportType, setReportType] = useState<ReportTypes>(ReportTypes.YEARLY);
   const [formValues, setFormValues] = useState<FormValues>(initialValues);
   const daysOptions = DAYS_OPTIONS_MAPPING[reportType] || [];
 
@@ -29,11 +43,11 @@ export default function BridgePage(): JSX.Element {
   }, [reportType]);
 
   const changeFormat = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormat(event.target.value);
+    setFormat(event.target.value as FormatTypes);
   };
 
   const changeReportType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setReportType(event.target.value);
+    setReportType(event.target.value as ReportTypes);
   };
 
   const handleInputChange = (e: React.ChangeEvent<FormItemElement>) => {
@@ -44,7 +58,11 @@ export default function BridgePage(): JSX.Element {
 
   const generateReport = (event: React.FormEvent<HTMLFormElement>): void => {
     event.preventDefault();
-    console.log('formValues', formValues);
+    const ReportTypeClass = REPORT_TYPE_ABSTRACTIONS[reportType];
+    const DocumentFormatClass = DOCUMENT_FORMAT_IMPLEMENTATIONS[format];
+
+    const report = new ReportTypeClass(new DocumentFormatClass());
+    report.generate(formValues);
   };
 
   return (

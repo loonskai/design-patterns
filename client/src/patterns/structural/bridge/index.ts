@@ -9,5 +9,3 @@ export enum ReportTypes {
   MONTHLY = 'MONTHLY',
   DAILY = 'DAILY'
 }
-
-class Bridge {}

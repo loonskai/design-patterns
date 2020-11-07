@@ -3,7 +3,9 @@ import { FormatTypes, ReportTypes } from '../patterns/structural/bridge';
 import { ReportForm } from '../components/pattern-pages/bridge/ReportForm';
 import { FormItemElement, FormValues, NumberOptionsMapping } from '../components/pattern-pages/bridge/types';
 import { YearlyReport, MonthlyReport, DailyReport } from '../patterns/structural/bridge/reports';
-import { PDFDocument, ExcelDocument, WordDocument } from '../patterns/structural/bridge/documents';
+import { PDFDocument } from '../patterns/structural/bridge/documents/PDFDocument';
+import { WordDocument } from '../patterns/structural/bridge/documents/WordDocument';
+import { ExcelDocument } from '../patterns/structural/bridge/documents/ExcelDocument';
 
 const initialValues = {
   'first-name': '',
@@ -42,12 +44,12 @@ export default function BridgePage(): JSX.Element {
     setFormValues({ ...formValues, days: daysOptions[0] });
   }, [reportType]);
 
-  const changeFormat = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setFormat(event.target.value as FormatTypes);
+  const changeFormat = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFormat(e.target.value as FormatTypes);
   };
 
-  const changeReportType = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setReportType(event.target.value as ReportTypes);
+  const changeReportType = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setReportType(e.target.value as ReportTypes);
   };
 
   const handleInputChange = (e: React.ChangeEvent<FormItemElement>) => {
@@ -56,13 +58,13 @@ export default function BridgePage(): JSX.Element {
     setFormValues({ ...formValues, [name]: newValue });
   };
 
-  const generateReport = (event: React.FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
+  const generateReport = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
+    e.preventDefault();
     const ReportTypeClass = REPORT_TYPE_ABSTRACTIONS[reportType];
     const DocumentFormatClass = DOCUMENT_FORMAT_IMPLEMENTATIONS[format];
 
     const report = new ReportTypeClass(new DocumentFormatClass());
-    report.generate(formValues);
+    await report.generate(formValues);
   };
 
   return (

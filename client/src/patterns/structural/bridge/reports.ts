@@ -13,22 +13,58 @@ abstract class Report {
 }
 
 export class YearlyReport extends Report {
-  public generate(data: any) {
-    console.log('Generate yearly report:');
-    this.document.create(data, { title: 'This is your activity report for one year'});
+  public generate(data: any): void {
+    this.document.create(data, { 
+      title: `This is your productivity report for ${this.getCurrentYear()}`, 
+      docName: `${this.getCurrentYear()}-report` 
+    });
+  }
+
+  private getCurrentYear(): string {
+    return `${new Date().getFullYear()}`;
   }
 }
 
 export class MonthlyReport extends Report {
-  public generate(data: any) {
-    console.log('Generate monthly report:');
-    this.document.create(data, { title: 'Check your monthly report'});
+  public generate(data: any): void {
+    this.document.create(data, { 
+      title: `Check your ${this.getCurrentMonth()} productivity report`, 
+      docName: `${this.getCurrentMonth()}-report` 
+    });
+  }
+
+  private getCurrentMonth(): string {
+    const MONTHS = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return MONTHS[new Date().getMonth()];
   }
 }
 
 export class DailyReport extends Report {
-  public generate(data: any) {
-    console.log('Generate daily report:');
-    this.document.create(data, { title: 'Your daily activity', docName: 'daily-report'});
+  public generate(data: any): void {
+    this.document.create(data, { 
+      title: `Your daily activity on ${this.getDate()}`, 
+      docName: `${this.getTimestamp()}-report` 
+    });
+  }
+
+  private getTimestamp(): string {
+    return `${new Date().getTime()}`;
+  }
+
+  private getDate(): string {
+    return new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric' });
   }
 }

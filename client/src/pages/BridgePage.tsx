@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FormatTypes, ReportTypes } from '../patterns/structural/bridge';
 import { ReportForm } from '../components/pattern-pages/bridge/ReportForm';
-import { FormItemElement, FormValues, NumberOptionsMapping } from '../components/pattern-pages/bridge/types';
+import { FormItemElement, FormValues } from '../components/pattern-pages/bridge/types';
 import { YearlyReport, MonthlyReport, DailyReport } from '../patterns/structural/bridge/reports';
 import { PDFDocument } from '../patterns/structural/bridge/documents/PDFDocument';
 import { WordDocument } from '../patterns/structural/bridge/documents/WordDocument';
@@ -10,16 +10,9 @@ import { ExcelDocument } from '../patterns/structural/bridge/documents/ExcelDocu
 const initialValues = {
   'first-name': '',
   'last-name': '',
-  days: 0,
   planned: 0,
   completed: 0,
   comment: ''
-};
-
-const DAYS_OPTIONS_MAPPING: NumberOptionsMapping = {
-  [ReportTypes.YEARLY]: [365, 366],
-  [ReportTypes.MONTHLY]: [31, 30, 29, 28],
-  [ReportTypes.DAILY]: [1]
 };
 
 const REPORT_TYPE_ABSTRACTIONS = {
@@ -38,11 +31,6 @@ export default function BridgePage(): JSX.Element {
   const [format, setFormat] = useState<FormatTypes>(FormatTypes.PDF);
   const [reportType, setReportType] = useState<ReportTypes>(ReportTypes.YEARLY);
   const [formValues, setFormValues] = useState<FormValues>(initialValues);
-  const daysOptions = DAYS_OPTIONS_MAPPING[reportType] || [];
-
-  useEffect(() => {
-    setFormValues({ ...formValues, days: daysOptions[0] });
-  }, [reportType]);
 
   const changeFormat = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormat(e.target.value as FormatTypes);
@@ -54,7 +42,7 @@ export default function BridgePage(): JSX.Element {
 
   const handleInputChange = (e: React.ChangeEvent<FormItemElement>) => {
     const { name, value } = e.target;
-    const newValue = ['days', 'planned', 'completed'].includes(name) ? Number(value) : value;
+    const newValue = ['planned', 'completed'].includes(name) ? Number(value) : value;
     setFormValues({ ...formValues, [name]: newValue });
   };
 
@@ -86,7 +74,7 @@ export default function BridgePage(): JSX.Element {
           <option value={ReportTypes.DAILY}>Daily</option>
         </select>
       </div>
-      <ReportForm reportType={reportType} generateReport={generateReport} handleInputChange={handleInputChange} formValues={formValues} daysOptions={daysOptions}/>
+      <ReportForm reportType={reportType} generateReport={generateReport} handleInputChange={handleInputChange} formValues={formValues}/>
     </div>
   );
 }

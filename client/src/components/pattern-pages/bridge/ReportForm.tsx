@@ -6,10 +6,9 @@ type Props = {
   generateReport(event: React.FormEvent<HTMLFormElement>): void
   handleInputChange(event: React.FormEvent<FormItemElement>): void
   formValues: FormValues
-  daysOptions: number[]
 }
 
-export const ReportForm = ({ reportType, generateReport, handleInputChange, formValues, daysOptions }: Props): JSX.Element => {
+export const ReportForm = ({ reportType, generateReport, handleInputChange, formValues }: Props): JSX.Element => {
   return <div>
     <h2>{reportType} report</h2>
     <form onSubmit={generateReport}>
@@ -20,12 +19,6 @@ export const ReportForm = ({ reportType, generateReport, handleInputChange, form
       <div>
         <label htmlFor="last-name">Last name:</label>
         <input id="last-name" name="last-name" type="text" onChange={handleInputChange} value={formValues['last-name']}/>
-      </div>
-      <div>
-        <label htmlFor="lastname">Days:</label>
-        <select id="days" name="days" onChange={handleInputChange} value={formValues.days}>
-          {daysOptions.map(option => <option value={Number(option)}>{option}</option>)}
-        </select>
       </div>
       <div>
         <label htmlFor="planned">Tasks planned:</label>

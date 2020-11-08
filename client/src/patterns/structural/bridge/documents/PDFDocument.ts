@@ -1,16 +1,24 @@
-import { DocumentFormat, ReportTypeInfo } from './index';
+import { DocumentFormat, DocumentData } from './index';
 import { jsPDF } from 'jspdf';
 
 export class PDFDocument implements DocumentFormat {
-  async create(data: any, reportTypeInfo: ReportTypeInfo = {}): Promise<void> {
+  async create(data: DocumentData): Promise<void> {
     const doc = new jsPDF();
-    doc.text(reportTypeInfo.title || '', 10, 10);
-    doc.text(`First Name: ${data['first-name']}`, 10, 30);
-    doc.text(`Last Name: ${data['last-name']}`, 10, 50);
-    doc.text(`Tasks planned: ${data.planned}`, 10, 70);
-    doc.text(`Tasks completed: ${data.completed}`, 10, 90);
-    doc.text(`Productivity: ${data.completed / data.planned * 100}%`, 10, 110);
-    doc.text(`Comment: ${data.comment}`, 10, 130);
-    doc.save(reportTypeInfo.docName);
+
+    let yPosition = 0;
+
+    doc.text(data.title, 10, yPosition += 20);
+
+    data.userInfo.forEach(infoItem => {
+      doc.text(`${infoItem.label}: ${infoItem.value}`, 10, yPosition += 20);
+    });
+
+    data.fields.forEach(field => {
+      doc.text(`${field.label}: ${field.value}`, 10, yPosition += 20);
+    });
+
+    doc.text(`Comment: ${data.comment}`, 10, yPosition += 20);
+
+    doc.save(data.docName);
   }
 }

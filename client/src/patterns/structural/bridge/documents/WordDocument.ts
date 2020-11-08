@@ -1,75 +1,44 @@
 import { Packer, Document, Table, TableRow, TableCell, TextRun, Paragraph, WidthType, HeadingLevel } from 'docx';
 import { saveAs } from 'file-saver';
-import { DocumentFormat, ReportTypeInfo } from './index';
+import { DocumentFormat, DocumentData } from './index';
 
 export class WordDocument implements DocumentFormat {
-  async create(data: any, reportTypeInfo: ReportTypeInfo = {}): Promise<void> {
-    console.log(data);
+  async create(data: DocumentData): Promise<void> {
     const doc = new Document();
+
     const heading = new Paragraph({
-      text: reportTypeInfo.title || '',
+      text: data.title || '',
       heading: HeadingLevel.TITLE,
       thematicBreak: true,
     });
-    const userInfo = [
-      new Paragraph({
-        children: [
-          new TextRun({ text: 'First Name: ' }),
-          new TextRun({ text: data['first-name'], bold: true })
-        ]
-      }),
-      new Paragraph({
-        children: [
-          new TextRun({ text: 'Last Name: ' }),
-          new TextRun({ text: data['last-name'], bold: true })
-        ]
-      })
-    ];
+
+    const userInfo = data.userInfo.map(infoItem => new Paragraph({
+      children: [
+        new TextRun({ text: `${infoItem.label}: ` }),
+        new TextRun({ text: infoItem.value, bold: true })
+      ]
+    }));
+
     const table = new Table({
       width: { size: 100, type: WidthType.PERCENTAGE },
-      rows: [
-        new TableRow({
-          children: [
-            new TableCell({
-              children: [new Paragraph('Planned tasks')],
-              width: { size: 500, type: WidthType.DXA }
-            }),
-            new TableCell({
-              children: [new Paragraph(`${data.planned}`)],
-              width: { size: 500, type: WidthType.DXA }
-            })
-          ]
-        }),
-        new TableRow({
-          children: [
-            new TableCell({
-              children: [new Paragraph('Completed tasks')],
-              width: { size: 50, type: WidthType.PERCENTAGE }
-            }),
-            new TableCell({
-              children: [new Paragraph(`${data.completed}`)],
-              width: { size: 50, type: WidthType.PERCENTAGE }
-            })
-          ]
-        }),
-        new TableRow({
-          children: [
-            new TableCell({
-              children: [new Paragraph('Productivity')],
-              width: { size: 50, type: WidthType.PERCENTAGE }
-            }),
-            new TableCell({
-              children: [new Paragraph(`${data.completed / data.planned * 100}%`)],
-              width: { size: 50, type: WidthType.PERCENTAGE }
-            })
-          ]
-        })
-      ]
+      rows: data.fields.map(field => new TableRow({
+        children: [
+          new TableCell({
+            children: [new Paragraph(field.label)],
+            width: { size: 500, type: WidthType.DXA }
+          }),
+          new TableCell({
+            children: [new Paragraph(String(field.value))],
+            width: { size: 500, type: WidthType.DXA }
+          })
+        ]
+      }))
     });
+
     const comment = new Paragraph({ 
       children: [
         new TextRun({ text: 'Comment: ', bold: true }),
-        new TextRun(data.comment)
+        new TextRun(data.comment || '')
       ]
     });
 
@@ -83,6 +52,6 @@ export class WordDocument implements DocumentFormat {
     });
 
     const blob = await Packer.toBlob(doc);
-    saveAs(blob, `${reportTypeInfo.docName}.docx`);
+    saveAs(blob, `${data.docName}.docx`);
   }
 }

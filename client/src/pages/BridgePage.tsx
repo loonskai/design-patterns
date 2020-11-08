@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { FormatTypes, ReportTypes } from '../patterns/structural/bridge';
-import { ReportForm } from '../components/pattern-pages/bridge/ReportForm';
-import { FormItemElement, FormValues } from '../components/pattern-pages/bridge/types';
-import { YearlyReport, MonthlyReport, DailyReport } from '../patterns/structural/bridge/reports';
+import { ReportForm, FormItemElement } from '../components/pattern-pages/bridge/ReportForm';
+import { ReportData } from '../patterns/structural/bridge/reports';
+import { DailyReport } from '../patterns/structural/bridge/reports/DailyReport';
+import { MonthlyReport } from '../patterns/structural/bridge/reports/MonthlyReport';
+import { YearlyReport } from '../patterns/structural/bridge/reports/YearlyReport';
 import { PDFDocument } from '../patterns/structural/bridge/documents/PDFDocument';
 import { WordDocument } from '../patterns/structural/bridge/documents/WordDocument';
 import { ExcelDocument } from '../patterns/structural/bridge/documents/ExcelDocument';
@@ -30,7 +32,7 @@ const DOCUMENT_FORMAT_IMPLEMENTATIONS = {
 export default function BridgePage(): JSX.Element {
   const [format, setFormat] = useState<FormatTypes>(FormatTypes.PDF);
   const [reportType, setReportType] = useState<ReportTypes>(ReportTypes.YEARLY);
-  const [formValues, setFormValues] = useState<FormValues>(initialValues);
+  const [formValues, setFormValues] = useState<ReportData>(initialValues);
 
   const changeFormat = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setFormat(e.target.value as FormatTypes);

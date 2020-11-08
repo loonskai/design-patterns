@@ -1,8 +1,7 @@
-export type ReportTypeInfo = {
-  title?: string
-  docName?: string
-}
+import { ReportDocument } from '../reports';
+
+export type DocumentData = ReportDocument;
 
 export interface DocumentFormat {
-  create(data: any, reportTypeInfo?: ReportTypeInfo): void
+  create(data: DocumentData): void
 }

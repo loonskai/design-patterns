@@ -1,12 +1,14 @@
 import React from 'react';
-import { FormItemElement, FormValues } from './types';
+import { ReportData } from '../../../patterns/structural/bridge/reports';
 
 type Props = {
   reportType: string
   generateReport(event: React.FormEvent<HTMLFormElement>): void
   handleInputChange(event: React.FormEvent<FormItemElement>): void
-  formValues: FormValues
+  formValues: ReportData
 }
+
+export type FormItemElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
 
 export const ReportForm = ({ reportType, generateReport, handleInputChange, formValues }: Props): JSX.Element => {
   return <div>

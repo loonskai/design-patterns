@@ -38,6 +38,18 @@ export abstract class Report {
     this.document = document;
   }
 
+  public generate(data: ReportData): void {
+    this.document.create(this.prepare(data));
+  }
+
+  protected prepare(data: ReportData): ReportDocument {
+    return {
+      title: 'Your productivity report', 
+      docName: 'report',
+      ...this.prepareReportFields(data)
+    };
+  }
+
   protected prepareReportFields(data: ReportData): ReportDocumentData {
     return {
       userInfo: [

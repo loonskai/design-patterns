@@ -11,4 +11,9 @@ router.post('/todos', async (req, res: any) => {
   res.send(value);
 });
 
+router.post('/user-generate', async (req, res) => {
+  console.log(req.body);
+  res.send(req.body);
+});
+
 export default router;

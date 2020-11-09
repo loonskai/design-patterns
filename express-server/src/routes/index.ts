@@ -12,7 +12,6 @@ router.post('/todos', async (req, res: any) => {
 });
 
 router.post('/user-generate', async (req, res) => {
-  console.log(req.body);
   res.send(req.body);
 });
 

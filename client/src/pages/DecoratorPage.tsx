@@ -1,21 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { UserGeneratorForm, GeneratedUserOptions, FormItemElement } from '../components/pattern-pages/decorator/UserGeneratorForm';
+import { TextFileForm, TextFileOptions } from '../components/pattern-pages/decorator/TextFileForm';
 
 
 const initialValues = {
-  firstName: '',
-  randomFirstName: false,
-  lastName: '',
-  randomLastName: false,
-  email: '',
-  randomEmail: true,
-  password: '',
-  randomPassword: true
+  text: '',
+  fileName: '',
+  compress: false,
+  encrypt: false
 };
 
 export default function DecoratorPage(): JSX.Element {
-  const [formValues, setFormValues] = useState<GeneratedUserOptions>(initialValues);
+  const [formValues, setFormValues] = useState<TextFileOptions>(initialValues);
   const [generated, setGenerated] = useState<string>('');
 
   const generateUser = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -24,17 +20,24 @@ export default function DecoratorPage(): JSX.Element {
     setGenerated(JSON.stringify(data, null, 2));
   };
 
-  const handleInputChange = (e: React.ChangeEvent<FormItemElement>) => {
-    const { name, value, checked } = e.target;
-    const newValue = name.includes('random') ? checked : value;
-    setFormValues({ ...formValues, [name]: newValue });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, type } = e.target;
+    switch (type) {
+    case 'textarea':
+    case 'text':
+      setFormValues({ ...formValues, [name]: e.target.value });
+      break;
+    case 'checkbox':
+      setFormValues({ ...formValues, [name]: e.target.checked });
+      break;
+    default: return;
+    }
   };
 
   return (
     <div>
       <h1>Decorator</h1>
-      <h3>Generate user info</h3>
-      <UserGeneratorForm formValues={formValues} handleInputChange={handleInputChange} generateUser={generateUser} />
+      <TextFileForm formValues={formValues} handleInputChange={handleInputChange} generateUser={generateUser} />
       <div>
         Result:
         <pre>{generated}</pre>

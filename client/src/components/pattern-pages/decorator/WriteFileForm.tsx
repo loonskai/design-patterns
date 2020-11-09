@@ -1,6 +1,6 @@
 import React from 'react';
 
-export type TextFileOptions = {
+export type WriteFileOptions = {
   text: string
   fileName: string
   compress?: boolean
@@ -8,13 +8,13 @@ export type TextFileOptions = {
 }
 
 type Props = {
-  generateUser(event: React.FormEvent<HTMLFormElement>): void
+  write(event: React.FormEvent<HTMLFormElement>): void
   handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void
-  formValues: TextFileOptions
+  formValues: WriteFileOptions
 }
 
-export const TextFileForm = ({ handleInputChange, generateUser, formValues }: Props): JSX.Element => {
-  return <form onSubmit={generateUser}>
+export const WriteFileForm = ({ handleInputChange, write, formValues }: Props): JSX.Element => {
+  return <form onSubmit={write}>
     <div>
       <textarea name="text" onChange={handleInputChange} value={formValues.text}/>
     </div>
@@ -28,6 +28,6 @@ export const TextFileForm = ({ handleInputChange, generateUser, formValues }: Pr
       <label htmlFor="encrypt">Encrypt</label>
       <input id="encrypt" name="encrypt" onChange={handleInputChange} type="checkbox" checked={formValues.encrypt} />
     </div>
-    <button type="submit">Save</button>
+    <button type="submit">Write</button>
   </form>;
 };

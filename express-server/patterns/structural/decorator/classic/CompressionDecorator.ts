@@ -1,12 +1,19 @@
+import { deflateRaw } from 'zlib';
+import { promisify } from 'util';
 import { DataSourceDecorator } from './index';
 
+const asyncDeflateRaw = promisify(deflateRaw);
+
 export class CompressionDecorator extends DataSourceDecorator {
-  public writeData(data: any) {
-    console.log('compress');
-    this.wrapee.writeData(data);
+  public async writeData(data: any) {
+    const buffer = Buffer.from(data, 'utf-8');
+    const buf = await asyncDeflateRaw(buffer);
+
+    this.wrapee.ext = '.txt.gz'
+    this.wrapee.writeData(buf, 'binary'); 
   }
 
-  public readData() {
+  public async readData() {
     console.log('decompress');
     return this.wrapee.readData();
   }

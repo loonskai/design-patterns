@@ -1,4 +1,4 @@
-import { DataSource } from '../FileDataSource';
+import { DataSource } from './FileDataSource';
 
 export abstract class DataSourceDecorator implements DataSource {
   protected wrapee: DataSource

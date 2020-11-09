@@ -18,7 +18,7 @@ export class EncryptionDecorator extends DataSourceDecorator {
   }
 
   public async readData(): Promise<any> {
-    console.log('decrypt');
+    /* TODO: Implement decrypt method */
     return this.wrapee.readData();
   }
 }

@@ -1,0 +1,11 @@
+{
+  "preload": {
+    "files": [
+      {
+        "type": "tilemapTiledJSON",
+        "key": "levelMap",
+        "url": "src/games/tank/assets/maps/levelMap.json"
+      }
+    ]
+  }
+}

@@ -13,6 +13,8 @@ export default function Navigation(): JSX.Element {
           <li><NavLink to="/adapter">Adapter</NavLink></li>
           <li><NavLink to="/bridge">Bridge</NavLink></li>
           <li><NavLink to="/decorator">Decorator</NavLink></li>
+          <li><NavLink to="/facade">Facade</NavLink></li>
+          <li><NavLink to="/flyweight">Flyweight</NavLink></li>
         </ul>
       </nav>
     </header>

@@ -12,6 +12,8 @@ import SingletonPage from './pages/SingletonPage';
 import AdapterPage from './pages/AdapterPage';
 import BridgePage from './pages/BridgePage';
 import DecoratorPage from './pages/DecoratorPage';
+import FacadePage from './pages/FacadePage';
+import FlyweightPage from './pages/FlyweightPage';
 
 export default function Router(): JSX.Element {
   return (
@@ -38,6 +40,12 @@ export default function Router(): JSX.Element {
         </Route>
         <Route path="/decorator">
           <DecoratorPage />
+        </Route>
+        <Route path="/facade">
+          <FacadePage />
+        </Route>
+        <Route path="/flyweight">
+          <FlyweightPage />
         </Route>
       </Switch>
     </BrowserRouter>

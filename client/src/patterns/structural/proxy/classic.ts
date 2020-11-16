@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-interface InterfaceAPI {
-  request(path: string): void
+export interface InterfaceAPI {
+  request(path: string | number | symbol): void
 }
 
 export class API implements InterfaceAPI {

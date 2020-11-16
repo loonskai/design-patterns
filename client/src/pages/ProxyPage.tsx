@@ -1,8 +1,13 @@
 import React, { useEffect } from 'react';
 import { CacheProxy, API } from '../patterns/structural/proxy/classic';
+import { cacheProxy } from '../patterns/structural/proxy/es6';
 
 export default function ProxyPage(): JSX.Element {
-  const api = new CacheProxy(new API('https://jsonplaceholder.typicode.com'));
+  /* Classic OOP implementation */
+  // const api = new CacheProxy(new API('https://jsonplaceholder.typicode.com'));
+
+  /* ES6 Proxy */
+  const api = cacheProxy(new API('https://jsonplaceholder.typicode.com'));
 
   useEffect(() => {
     (async () => {

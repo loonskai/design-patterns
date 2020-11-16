@@ -15,6 +15,7 @@ export default function Navigation(): JSX.Element {
           <li><NavLink to="/decorator">Decorator</NavLink></li>
           <li><NavLink to="/facade">Facade</NavLink></li>
           <li><NavLink to="/flyweight">Flyweight</NavLink></li>
+          <li><NavLink to="/proxy">Proxy</NavLink></li>
         </ul>
       </nav>
     </header>

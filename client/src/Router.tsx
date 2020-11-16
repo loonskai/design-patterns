@@ -14,6 +14,7 @@ import BridgePage from './pages/BridgePage';
 import DecoratorPage from './pages/DecoratorPage';
 import FacadePage from './pages/FacadePage';
 import FlyweightPage from './pages/FlyweightPage';
+import ProxyPage from './pages/ProxyPage';
 
 export default function Router(): JSX.Element {
   return (
@@ -46,6 +47,9 @@ export default function Router(): JSX.Element {
         </Route>
         <Route path="/flyweight">
           <FlyweightPage />
+        </Route>
+        <Route path="/proxy">
+          <ProxyPage />
         </Route>
       </Switch>
     </BrowserRouter>

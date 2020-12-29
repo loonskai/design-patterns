@@ -8,9 +8,9 @@ export type WriteFileOptions = {
 }
 
 type Props = {
-  write(event: React.FormEvent<HTMLFormElement>): void
-  handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void
-  formValues: WriteFileOptions
+  write(event: React.FormEvent<HTMLFormElement>): void;
+  handleInputChange(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void;
+  formValues: WriteFileOptions;
 }
 
 export const WriteFileForm = ({ handleInputChange, write, formValues }: Props): JSX.Element => {

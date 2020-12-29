@@ -1,32 +1,32 @@
 import { DocumentFormat } from '../documents';
 
 export type ReportData = {
-  'first-name': string
-  'last-name': string
-  planned: number
-  completed: number
-  comment: string
+  'first-name': string;
+  'last-name': string;
+  planned: number;
+  completed: number;
+  comment: string;
 }
 
 type DocumentUserInfo = {
-  label: string,
-  value: string
+  label: string;
+  value: string;
 }
 
 type ReportDocumentDataField = {
-  label: string,
-  value: string | number
+  label: string;
+  value: string | number;
 }
 
 type ReportDocumentData = {
-  userInfo: DocumentUserInfo[]
-  fields: ReportDocumentDataField[]
-  comment?: string
+  userInfo: DocumentUserInfo[];
+  fields: ReportDocumentDataField[];
+  comment?: string;
 }
 
 type ReportTypeDocumentData = {
-  title: string
-  docName: string
+  title: string;
+  docName: string;
 }
 
 export type ReportDocument = ReportDocumentData & ReportTypeDocumentData

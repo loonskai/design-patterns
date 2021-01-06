@@ -16,6 +16,7 @@ import FacadePage from './pages/FacadePage';
 import FlyweightPage from './pages/FlyweightPage';
 import ProxyPage from './pages/ProxyPage';
 import ChainOfResponsibilityPage from './pages/ChainOfResponsibilityPage';
+import CommandPage from './pages/CommandPage';
 
 export default function Router(): JSX.Element {
   return (
@@ -54,6 +55,9 @@ export default function Router(): JSX.Element {
         </Route>
         <Route path="/chain-of-responsibility">
           <ChainOfResponsibilityPage />
+        </Route>
+        <Route path="/command">
+          <CommandPage />
         </Route>
       </Switch>
     </BrowserRouter>

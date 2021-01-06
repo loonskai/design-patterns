@@ -24,9 +24,7 @@ export class ValidationHandler extends AbstractHandler {
   }
 
   public async handle(req: IncomingMessage, res: ServerResponse) {
-    console.log(req.body);
     const errors = this.validate(req.body);
-    
     if (errors.length > 0) {
       res.writeHead(400, {
         'Content-Type': 'application/json'

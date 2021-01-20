@@ -9,7 +9,7 @@ type SelectionRange = {
   end: number;
 }
 
-const ast = [
+const INITIAL_AST = [
   {
     value: 'H',
     style: ['bold', 'color-#D53030']
@@ -77,6 +77,8 @@ type Char = {
   style: string[];
 }
 
+const isColorStyle = (style: string): boolean => /^color-\#[0-9A-Fa-f]{6}$/.test(style);
+
 const createElement = (chars: Char[]) => {
   const content = chars.reduce((acc, char) => acc + char.value, '');
   const { style: charStyles } = chars[0];
@@ -88,7 +90,7 @@ const createElement = (chars: Char[]) => {
       case 'italic': return [...acc, ['font-style', 'italic']];
       case 'underline': return [...acc, ['text-decoration', 'underline']];
       default: {
-        if (/^color-\#[0-9A-Fa-f]{6}$/.test(style)) {
+        if (isColorStyle(style)) {
           const hex = style.match(/\#[0-9A-Fa-f]{6}$/);
           return [...acc, ['color', hex]];
         }
@@ -134,13 +136,38 @@ const treeToHtml = (tree: Char[]) => {
 };
 
 export default function TextEditor(): JSX.Element {
+  const [ast, setAST] = useState(INITIAL_AST);
   const [html, setHtml] = useState(treeToHtml(ast));
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
   const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
 
+  useEffect(() => {
+    setHtml(treeToHtml(ast));
+  }, [ast]);
+
   const onColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
-    console.log(event.target.value);
+    if (!selectionRange) return;
+    const updatedAST = [...ast].map((char, idx) => {
+      if (idx >= selectionRange.start && idx <= selectionRange.end) {
+        if (!char.style.some(charStyle => isColorStyle(charStyle))) {
+          return {
+            value: char.value,
+            style: [...char.style, `color-${event.target.value}`]
+          };
+        }
+        return {
+          value: char.value,
+          style: char.style.map(
+            charStyle => isColorStyle(charStyle)
+              ? charStyle.replace(/\#[0-9A-Fa-f]{6}/, event.target.value) 
+              : charStyle
+          )
+        };
+      }
+      return char;
+    });
+    setAST(updatedAST);
   };
 
   const handleMouseUp = (event: React.MouseEvent) => {

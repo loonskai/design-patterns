@@ -15,6 +15,10 @@ const INITIAL_AST = [
     style: ['bold', 'color-#D53030']
   },
   {
+    value: 'H',
+    style: ['bold', 'color-#D53030']
+  },
+  {
     value: 'e',
     style: ['bold']
   },
@@ -106,7 +110,6 @@ const createElement = (chars: Char[]) => {
   return `<span${inlineStyleString}>${content}</span>`;
 };
 
-
 const treeToHtml = (tree: Char[]) => {
   const transBuffer = [] as Array<Char[]>;
 
@@ -140,35 +143,24 @@ export default function TextEditor(): JSX.Element {
   const [html, setHtml] = useState(treeToHtml(ast));
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
   const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
+  const [color, setColor] = useState('#000000');
+  const [bold, setBold] = useState(false);
+  const [italic, setItalic] = useState(false);
+  const [underline, setUnderline] = useState(false);
 
   useEffect(() => {
     setHtml(treeToHtml(ast));
   }, [ast]);
 
-  const onColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    event.preventDefault();
-    if (!selectionRange) return;
-    const updatedAST = [...ast].map((char, idx) => {
-      if (idx >= selectionRange.start && idx <= selectionRange.end) {
-        if (!char.style.some(charStyle => isColorStyle(charStyle))) {
-          return {
-            value: char.value,
-            style: [...char.style, `color-${event.target.value}`]
-          };
-        }
-        return {
-          value: char.value,
-          style: char.style.map(
-            charStyle => isColorStyle(charStyle)
-              ? charStyle.replace(/\#[0-9A-Fa-f]{6}/, event.target.value) 
-              : charStyle
-          )
-        };
-      }
-      return char;
-    });
-    setAST(updatedAST);
-  };
+  useEffect(() => {
+    if (!selectionRange) {
+      setBold(false);
+      setItalic(false);
+      setUnderline(false);
+    } else {
+
+    }
+  }, [selectionRange]);
 
   const handleMouseUp = (event: React.MouseEvent) => {
     const selection = window?.getSelection();
@@ -203,6 +195,9 @@ export default function TextEditor(): JSX.Element {
 
           if (isEndNode) {
             end = totalOffset + endOffset;
+            if (isStartNode) {
+              end -= 1;
+            }
             break;
           }
 
@@ -211,12 +206,92 @@ export default function TextEditor(): JSX.Element {
 
         setSelectionRange({ start, end });
       }
+    } else {
+      setSelectionRange(null);
     }
   };
 
+  const updateColor = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setColor(event.target.value);
+  };
+
+  const updateItalic = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setItalic(!italic);
+  };
+
+  const updateUnderline = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUnderline(!underline);
+  };
+
+  const updateFontWeight = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBold(!bold);
+  };
+
+  useEffect(() => {
+    if (!selectionRange) return;
+    const updatedAST = [...ast].map((char, idx) => {
+      if (idx >= selectionRange.start && idx <= selectionRange.end) {
+        if (!char.style.some(charStyle => isColorStyle(charStyle))) {
+          return {
+            value: char.value,
+            style: [...char.style, `color-${color}`]
+          };
+        }
+        return {
+          value: char.value,
+          style: char.style.map(
+            charStyle => isColorStyle(charStyle)
+              ? charStyle.replace(/\#[0-9A-Fa-f]{6}/, color) 
+              : charStyle
+          )
+        };
+      }
+      return char;
+    });
+    setAST(updatedAST);
+  }, [color]);
+
+  useEffect(() => {
+    if (!selectionRange) return;
+    const updatedAST = [...ast].map((char, idx) => {
+      if (idx >= selectionRange.start && idx <= selectionRange.end) {
+        return {
+          value: char.value,
+          style: bold 
+            ? [...new Set([...char.style, 'bold'])]
+            : char.style.filter(charStyle => charStyle !== 'bold')
+        };
+      }
+      return char;
+    });
+    setAST(updatedAST);
+  }, [bold]);
+
+  useEffect(() => {
+    if (!selectionRange) return;
+
+  }, [italic]);
+
+  useEffect(() => {
+    if (!selectionRange) return;
+
+  }, [bold]);
+
+  useEffect(() => {
+    if (!selectionRange) return;
+
+  }, [underline]);
+
   return <div>
     <EditorToolbar
-      onColorChange={onColorChange}
+      color={color}
+      bold={bold}
+      underline={underline}
+      italic={italic}
+      updateColor={updateColor}
+      updateFontWeight={updateFontWeight}
+      updateItalic={updateItalic}
+      updateUnderline={updateUnderline}
     />
     <div 
       id="text"

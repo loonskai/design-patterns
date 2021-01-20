@@ -19,7 +19,8 @@
     "resolveJsonModule": true,
     "noEmit": true,
     "strictPropertyInitialization": false,
-    "jsx": "react"
+    "jsx": "react",
+    "downlevelIteration": true
   },
   "include": [
     "./src",

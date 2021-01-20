@@ -1,40 +1,62 @@
 import React from 'react';
 
 type Props = {
-  // strokeStyle: string;
-  // lineWidth: number;
-  onColorChange(event: React.FormEvent<HTMLInputElement>): void;
-  // onLineWidthChange(event: React.FormEvent<HTMLInputElement>): void;
+  color: string;
+  bold: boolean;
+  underline: boolean;
+  italic: boolean;
+  updateColor(event: React.FormEvent<HTMLInputElement>): void;
+  updateFontWeight(event: React.FormEvent<HTMLInputElement>): void;
+  updateItalic(event: React.FormEvent<HTMLInputElement>): void;
+  updateUnderline(event: React.FormEvent<HTMLInputElement>): void;
 }
 
-export default function EditorToolbar({ onColorChange /* strokeStyle, lineWidth, , onLineWidthChange */ }: Props): JSX.Element {
+export default function EditorToolbar({
+  color,
+  bold,
+  underline,
+  italic,
+  updateColor, 
+  updateItalic, 
+  updateFontWeight, 
+  updateUnderline 
+}: Props): JSX.Element {
   return <div>
     <div>
       <label htmlFor="text-color">Text Color:</label>
-      <input id="text-color" type="color" onChange={onColorChange} />
+      <input 
+        id="text-color" 
+        type="color" 
+        value={color} 
+        onChange={updateColor} 
+      />
     </div>
     <div>
       <label htmlFor="italic">Italic</label>
-      <input id="italic" type="checkbox"/>
+      <input 
+        id="italic" 
+        type="checkbox" 
+        checked={italic} 
+        onChange={updateItalic} 
+      />
     </div>
     <div>
       <label htmlFor="bold">Bold</label>
-      <input id="bold" type="checkbox"/>
+      <input 
+        id="bold" 
+        type="checkbox" 
+        checked={bold} 
+        onChange={updateFontWeight} 
+      />
     </div>
     <div>
       <label htmlFor="underline">Underline</label>
-      <input id="underline" type="checkbox"/>
-    </div>
-    {/* 
-    <div>
-      <span>{lineWidth}</span>
       <input 
-        type="range"
-        value={lineWidth}
-        onChange={onLineWidthChange} 
-        min={1} 
-        max={10} 
-      /> 
-    </div>*/}
+        id="underline" 
+        type="checkbox" 
+        checked={underline} 
+        onChange={updateUnderline} 
+      />
+    </div>
   </div>;
 }

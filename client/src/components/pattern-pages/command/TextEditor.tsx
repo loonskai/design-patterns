@@ -5,8 +5,8 @@ import './TextEditor.css';
 import { Invoker } from '../../../patterns/behavioral/command';
 
 type SelectionRange = {
-  selectionStart: number;
-  selectionEnd: number;
+  start: number;
+  end: number;
 }
 
 const ast = [
@@ -99,8 +99,9 @@ const createElement = (chars: Char[]) => {
   const inlineString = inlineEntries
     .map(([attribute, value]: string[]) => `${attribute}:${value};`)
     .join('');
+  const inlineStyleString = inlineString ? ` style="${inlineString}"` : '';
 
-  return inlineString ? `<span style="${inlineString}">${content}</span>` : content;
+  return `<span${inlineStyleString}>${content}</span>`;
 };
 
 
@@ -135,7 +136,8 @@ const treeToHtml = (tree: Char[]) => {
 export default function TextEditor(): JSX.Element {
   const [html, setHtml] = useState(treeToHtml(ast));
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
-  
+  const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
+
   const onColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     console.log(event.target.value);
@@ -144,41 +146,44 @@ export default function TextEditor(): JSX.Element {
   const handleMouseUp = (event: React.MouseEvent) => {
     const selection = window?.getSelection();
     if (selection?.toString()) {
-      let { startOffset, endOffset } = selection.getRangeAt(0);
+      const { 
+        startContainer,
+        endContainer,
+        startOffset, 
+        endOffset 
+      } = selection.getRangeAt(0);
 
-      const anchorElement = selection?.anchorNode?.parentElement;
-      const focusElement = selection?.focusNode?.parentElement;
-      console.log('anchorElement', anchorElement);
-      console.log('focusElement', focusElement);
+      const containerElement = inputRef.current;
+      const startNode = startContainer.parentNode;
+      const endNode = endContainer.parentNode;
 
-      const containerNode = selection.getRangeAt(0).commonAncestorContainer;
-      const containerElement = containerNode.nodeType === 1 ? containerNode : containerNode.parentNode;
-      let offset = 0;
+      let totalOffset = 0;
+      let start = 0;
+      let end = 0;
+      let startReached = false;
 
       if (containerElement && containerElement.hasChildNodes()) {
         for (let i = 0; containerElement.childNodes.length > i; i++) {
           const childNode = containerElement.childNodes[i] as any;
-          // Won't execute as all items are span
-          if (childNode.nodeType === document.TEXT_NODE) {
-            if ((offset + childNode.length) > startOffset) {
-              break;
-            }
-            offset = offset + childNode.length;
+          const { length } = childNode.textContent;
+          const isStartNode = childNode === startNode;
+          const isEndNode = childNode === endNode;
+
+          if (isStartNode && !startReached) {
+            startReached = true;
+            start = totalOffset + startOffset;
           }
 
-          if (childNode.nodeType === document.ELEMENT_NODE) {
-            if ((offset + childNode.textContent.length) > startOffset) {
-              break;
-            }   
-            offset = offset + childNode.textContent.length;
+          if (isEndNode) {
+            end = totalOffset + endOffset;
+            break;
           }
+
+          totalOffset += length;
         }
-      }
 
-      startOffset = startOffset + offset;
-      endOffset = endOffset + offset;
-      console.log('startOffset', startOffset);
-      console.log('endOffset', endOffset);
+        setSelectionRange({ start, end });
+      }
     }
   };
 
@@ -190,6 +195,7 @@ export default function TextEditor(): JSX.Element {
       id="text"
       className="text-input"
       onMouseUp={handleMouseUp}
+      ref={inputRef}
       dangerouslySetInnerHTML={{
         __html: sanitizeHtml(html, {
           allowedTags: ['span'],

@@ -21,6 +21,10 @@ export default function EditorToolbar({ onColorChange /* strokeStyle, lineWidth,
       <label htmlFor="bold">Bold</label>
       <input id="bold" type="checkbox"/>
     </div>
+    <div>
+      <label htmlFor="underline">Underline</label>
+      <input id="underline" type="checkbox"/>
+    </div>
     {/* 
     <div>
       <span>{lineWidth}</span>

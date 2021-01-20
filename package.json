@@ -71,7 +71,6 @@
     "postcss-safe-parser": "5.0.2",
     "react": "^17.0.1",
     "react-app-polyfill": "^2.0.0",
-    "react-contenteditable": "^3.3.5",
     "react-dev-utils": "^11.0.0",
     "react-dom": "^17.0.1",
     "react-refresh": "^0.8.3",
@@ -173,5 +172,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "@types/sanitize-html": "^1.27.0"
   }
 }

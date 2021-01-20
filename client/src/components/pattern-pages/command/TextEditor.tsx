@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
-import ContentEditable, { ContentEditableEvent } from 'react-contenteditable';
-// import sanitizeHtml from 'sanitize-html';
+import sanitizeHtml from 'sanitize-html';
 import EditorToolbar from './EditorToolbar';
 import './TextEditor.css';
 import { Invoker } from '../../../patterns/behavioral/command';
@@ -13,7 +12,7 @@ type SelectionRange = {
 const ast = [
   {
     value: 'H',
-    style: ['bold']
+    style: ['bold', 'color-#D53030']
   },
   {
     value: 'e',
@@ -29,19 +28,19 @@ const ast = [
   },
   {
     value: 'o',
-    style: ['bold', 'underscore']
+    style: ['bold', 'underline']
   },
   {
     value: ' ',
-    style: []
+    style: ['underline']
   },
   {
     value: 'w',
-    style: ['underscore']
+    style: ['underline']
   },
   {
     value: 'o',
-    style: ['underscore', 'italic']
+    style: ['underline', 'italic']
   },
   {
     value: 'r',
@@ -49,7 +48,7 @@ const ast = [
   },
   {
     value: 'l',
-    style: ['italic']
+    style: []
   },
   {
     value: 'd',
@@ -80,9 +79,28 @@ type Char = {
 
 const createElement = (chars: Char[]) => {
   const content = chars.reduce((acc, char) => acc + char.value, '');
-  const style = chars[0]?.style?.join(' ');
+  const { style: charStyles } = chars[0];
+  
+  const inlineEntries = Array.isArray(charStyles) 
+    ? charStyles.reduce((acc, style) => {
+      switch (style) {
+      case 'bold': return [...acc, ['font-weight', 'bold']];
+      case 'italic': return [...acc, ['font-style', 'italic']];
+      case 'underline': return [...acc, ['text-decoration', 'underline']];
+      default: {
+        if (/^color-\#[0-9A-Fa-f]{6}$/.test(style)) {
+          const hex = style.match(/\#[0-9A-Fa-f]{6}$/);
+          return [...acc, ['color', hex]];
+        }
+        return acc;
+      }}
+    }, [] as any) : [];
 
-  return `<span${style ? ' class="' + style + '"' : ''}>${content}</span>`;
+  const inlineString = inlineEntries
+    .map(([attribute, value]: string[]) => `${attribute}:${value};`)
+    .join('');
+
+  return inlineString ? `<span style="${inlineString}">${content}</span>` : content;
 };
 
 
@@ -115,89 +133,73 @@ const treeToHtml = (tree: Char[]) => {
 };
 
 export default function TextEditor(): JSX.Element {
-  const [observerRegistered, setObserverRegistered] = useState(false);
-  // const [text, setText] = useState('foo bar');
+  const [html, setHtml] = useState(treeToHtml(ast));
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
-  const editableRef = useRef(null) as MutableRefObject<HTMLDivElement | null>;
-
-  const [html, setHtml] = useState('');
-
-  console.log(treeToHtml(ast));
-  // const observer = new MutationObserver((mutationList) => {
-  //   mutationList.forEach(() => {
-  //     if (editableRef.current) {
-  //       console.log('editableRef.current.innerText', editableRef.current.innerText);
-  //       setText(editableRef.current.innerText);
-  //     }
-  //   });
-  // });
-
-  // useEffect(() => {
-  //   console.log('text',text);
-  // }, [text]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     observer.disconnect();
-  //   };
-  // }, []);
-
-  // useEffect(() => {
-  //   if (editableRef.current && !observerRegistered) {
-  //     observer.observe(editableRef.current, {
-  //       subtree: true,
-  //       characterData: true
-  //     });
-  //     setObserverRegistered(true);
-  //   }
-  // }, [editableRef]);
-
-  const sendCommand = (command: string) => {
-  };
   
   const onColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     event.preventDefault();
     console.log(event.target.value);
   };
 
-  const handleChange = (event: ContentEditableEvent) => {
-    setHtml(event.target.value);
+  const handleMouseUp = (event: React.MouseEvent) => {
+    const selection = window?.getSelection();
+    if (selection?.toString()) {
+      let { startOffset, endOffset } = selection.getRangeAt(0);
+
+      const anchorElement = selection?.anchorNode?.parentElement;
+      const focusElement = selection?.focusNode?.parentElement;
+      console.log('anchorElement', anchorElement);
+      console.log('focusElement', focusElement);
+
+      const containerNode = selection.getRangeAt(0).commonAncestorContainer;
+      const containerElement = containerNode.nodeType === 1 ? containerNode : containerNode.parentNode;
+      let offset = 0;
+
+      if (containerElement && containerElement.hasChildNodes()) {
+        for (let i = 0; containerElement.childNodes.length > i; i++) {
+          const childNode = containerElement.childNodes[i] as any;
+          // Won't execute as all items are span
+          if (childNode.nodeType === document.TEXT_NODE) {
+            if ((offset + childNode.length) > startOffset) {
+              break;
+            }
+            offset = offset + childNode.length;
+          }
+
+          if (childNode.nodeType === document.ELEMENT_NODE) {
+            if ((offset + childNode.textContent.length) > startOffset) {
+              break;
+            }   
+            offset = offset + childNode.textContent.length;
+          }
+        }
+      }
+
+      startOffset = startOffset + offset;
+      endOffset = endOffset + offset;
+      console.log('startOffset', startOffset);
+      console.log('endOffset', endOffset);
+    }
   };
-  
-  // const onMouseUp = (event: React.MouseEvent) => {
-  //   const selection = window?.getSelection();
-  //   if (selection?.toString()) {
-  //     console.log(selection?.toString());
-  //     const { startOffset, endOffset } = window?.getSelection()?.getRangeAt(0) || {};
-  //     console.log(startOffset);
-  //     console.log(endOffset);
-  //   } else {
-  //     console.log('clear');
-  //   }
-  // };
 
   return <div>
-    <EditorToolbar 
+    <EditorToolbar
       onColorChange={onColorChange}
     />
-    <ContentEditable
-      className="text-input"
-      onChange={handleChange}
-      html={html}
-    />
-    {/* <div 
-      // name="text" 
+    <div 
       id="text"
       className="text-input"
-      // cols={30} 
-      // rows={10}
-      // onInput={onInput}
-      onMouseUp={onMouseUp}
-      ref={editableRef}
+      onMouseUp={handleMouseUp}
+      dangerouslySetInnerHTML={{
+        __html: sanitizeHtml(html, {
+          allowedTags: ['span'],
+          allowedAttributes: {
+            span: ['style']
+          }
+        })
+      }}
       contentEditable
       suppressContentEditableWarning
-    >
-      {text}
-    </div> */}
+    />
   </div>;
 }

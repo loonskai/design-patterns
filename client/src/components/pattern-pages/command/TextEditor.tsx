@@ -9,11 +9,9 @@ type SelectionRange = {
   end: number;
 }
 
+const DEFAULT_COLOR = '#000000';
+
 const INITIAL_AST = [
-  {
-    value: 'H',
-    style: ['bold', 'color-#D53030']
-  },
   {
     value: 'H',
     style: ['bold', 'color-#D53030']
@@ -82,6 +80,10 @@ type Char = {
 }
 
 const isColorStyle = (style: string): boolean => /^color-\#[0-9A-Fa-f]{6}$/.test(style);
+const getColorHEXFromStyle = (style: string): string => {
+  const [ hex ] = style.match(/\#[0-9A-Fa-f]{6}$/) || [];
+  return hex;
+}; 
 
 const createElement = (chars: Char[]) => {
   const content = chars.reduce((acc, char) => acc + char.value, '');
@@ -95,8 +97,7 @@ const createElement = (chars: Char[]) => {
       case 'underline': return [...acc, ['text-decoration', 'underline']];
       default: {
         if (isColorStyle(style)) {
-          const hex = style.match(/\#[0-9A-Fa-f]{6}$/);
-          return [...acc, ['color', hex]];
+          return [...acc, ['color', getColorHEXFromStyle(style)]];
         }
         return acc;
       }}
@@ -138,12 +139,34 @@ const treeToHtml = (tree: Char[]) => {
   }, '');
 };
 
+type UpdateASTOptions = {
+  value: boolean;
+  property: 'bold' | 'italic' | 'underline';
+  start: number;
+  end: number;
+}
+
+const updateAST = (ast: Char[], { value, property, start, end }: UpdateASTOptions): Char[] => {
+  const updatedAST = [...ast].map((char, idx) => {
+    if (idx >= start && idx < end) {
+      return {
+        value: char.value,
+        style: value 
+          ? [...new Set([...char.style, property])]
+          : char.style.filter(charStyle => charStyle !== property)
+      };
+    }
+    return char;
+  });
+  return updatedAST;
+};
+ 
 export default function TextEditor(): JSX.Element {
+  const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
   const [ast, setAST] = useState(INITIAL_AST);
   const [html, setHtml] = useState(treeToHtml(ast));
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
-  const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
-  const [color, setColor] = useState('#000000');
+  const [color, setColor] = useState(DEFAULT_COLOR);
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
   const [underline, setUnderline] = useState(false);
@@ -158,7 +181,50 @@ export default function TextEditor(): JSX.Element {
       setItalic(false);
       setUnderline(false);
     } else {
+      let isBold = undefined as boolean | undefined;
+      let isItalic = undefined as boolean | undefined;
+      let isUnderline = undefined as boolean | undefined;
+      let sameColor = undefined as string | boolean | undefined;
 
+      const charsASTSelected = ast.slice(selectionRange.start, selectionRange.end);
+      charsASTSelected.forEach(char => {
+        if (isBold !== false && char.style.includes('bold')) {
+          isBold = true;
+        } else {
+          isBold = false;
+        }
+
+        if (isItalic !== false && char.style.includes('italic')) {
+          isItalic = true;
+        } else {
+          isItalic = false;
+        }
+
+        if (isUnderline !== false && char.style.includes('underline')) {
+          isUnderline = true;
+        } else {
+          isUnderline = false;
+        }
+
+        // TODO: FIX BUG
+        if (typeof sameColor === 'undefined') {
+          sameColor = getColorHEXFromStyle(char.style.find(charStyle => isColorStyle(charStyle)) || '');
+        } else {
+          const currentCharColor = getColorHEXFromStyle(char.style.find(charStyle => isColorStyle(charStyle)) || '');
+          if (sameColor !== currentCharColor) {
+            sameColor = false;
+          }
+        }
+      });
+
+      if (isBold) setBold(true);
+      if (isItalic) setItalic(true);
+      if (isUnderline) setItalic(true);
+      if (sameColor) {
+        setColor(sameColor as string);
+      } else {
+        setColor(DEFAULT_COLOR);
+      }
     }
   }, [selectionRange]);
 
@@ -195,9 +261,6 @@ export default function TextEditor(): JSX.Element {
 
           if (isEndNode) {
             end = totalOffset + endOffset;
-            if (isStartNode) {
-              end -= 1;
-            }
             break;
           }
 
@@ -230,7 +293,7 @@ export default function TextEditor(): JSX.Element {
   useEffect(() => {
     if (!selectionRange) return;
     const updatedAST = [...ast].map((char, idx) => {
-      if (idx >= selectionRange.start && idx <= selectionRange.end) {
+      if (idx >= selectionRange.start && idx < selectionRange.end) {
         if (!char.style.some(charStyle => isColorStyle(charStyle))) {
           return {
             value: char.value,
@@ -253,33 +316,35 @@ export default function TextEditor(): JSX.Element {
 
   useEffect(() => {
     if (!selectionRange) return;
-    const updatedAST = [...ast].map((char, idx) => {
-      if (idx >= selectionRange.start && idx <= selectionRange.end) {
-        return {
-          value: char.value,
-          style: bold 
-            ? [...new Set([...char.style, 'bold'])]
-            : char.style.filter(charStyle => charStyle !== 'bold')
-        };
-      }
-      return char;
+    const updatedAST = updateAST(ast, {
+      value: bold,
+      property: 'bold', 
+      start: selectionRange.start, 
+      end: selectionRange.end 
     });
     setAST(updatedAST);
   }, [bold]);
 
   useEffect(() => {
     if (!selectionRange) return;
-
+    const updatedAST = updateAST(ast, {
+      value: italic,
+      property: 'italic', 
+      start: selectionRange.start, 
+      end: selectionRange.end 
+    });
+    setAST(updatedAST);
   }, [italic]);
 
   useEffect(() => {
     if (!selectionRange) return;
-
-  }, [bold]);
-
-  useEffect(() => {
-    if (!selectionRange) return;
-
+    const updatedAST = updateAST(ast, {
+      value: underline,
+      property: 'underline', 
+      start: selectionRange.start, 
+      end: selectionRange.end 
+    });
+    setAST(updatedAST);
   }, [underline]);
 
   return <div>

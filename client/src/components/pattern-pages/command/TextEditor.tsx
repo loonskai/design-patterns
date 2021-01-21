@@ -11,54 +11,6 @@ type SelectionRange = {
 
 const DEFAULT_COLOR = '#000000';
 
-const INITIAL_AST = [
-  {
-    value: 'H',
-    style: ['bold', 'color-#D53030']
-  },
-  {
-    value: 'e',
-    style: ['bold']
-  },
-  {
-    value: 'l',
-    style: ['bold']
-  },
-  {
-    value: 'l',
-    style: ['bold']
-  },
-  {
-    value: 'o',
-    style: ['bold', 'underline']
-  },
-  {
-    value: ' ',
-    style: ['underline']
-  },
-  {
-    value: 'w',
-    style: ['underline']
-  },
-  {
-    value: 'o',
-    style: ['underline', 'italic']
-  },
-  {
-    value: 'r',
-    style: ['italic']
-  },
-  {
-    value: 'l',
-    style: []
-  },
-  {
-    value: 'd',
-    style: []
-  },
-];
-
-
 const isSameStyle = (style1: string[], style2: string[]) => {
   if (!Array.isArray(style1) || !Array.isArray(style2) || style1.length !== style2.length) {
     return false;
@@ -111,6 +63,17 @@ const createElement = (chars: Char[]) => {
   return `<span${inlineStyleString}>${content}</span>`;
 };
 
+type TextToTreeOptions = {
+  text: string;
+  ast: Char[] | null;
+}
+
+const textToTree = ({ text, ast }: TextToTreeOptions) => 
+  text.split('').map((char, idx) => ast && ast[idx] 
+    ? ast[idx] 
+    : { value: char, style: [] as string[] }
+  );
+
 const treeToHtml = (tree: Char[]) => {
   const transBuffer = [] as Array<Char[]>;
 
@@ -160,16 +123,39 @@ const updateAST = (ast: Char[], { value, property, start, end }: UpdateASTOption
   });
   return updatedAST;
 };
+
+const replaceCaret = (element: HTMLElement) => {
+  const target = document.createTextNode('');
+  element.appendChild(target);
+
+  const isTargetFocused = document.activeElement === element;
+  if (target !== null && target.nodeValue !== null && isTargetFocused) {
+    const selection = window.getSelection();
+    if (selection !== null) {
+      const range = document.createRange();
+      range.setStart(target, target.nodeValue.length);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    if (element instanceof HTMLElement) element.focus();
+  }
+};
  
 export default function TextEditor(): JSX.Element {
   const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
-  const [ast, setAST] = useState(INITIAL_AST);
+  const [text, setText] = useState('');
+  const [ast, setAST] = useState(textToTree({ text, ast: null }));
   const [html, setHtml] = useState(treeToHtml(ast));
   const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
   const [color, setColor] = useState(DEFAULT_COLOR);
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
   const [underline, setUnderline] = useState(false);
+
+  useEffect(() => {
+    setAST(textToTree({ text, ast }));
+  }, [text]);
 
   useEffect(() => {
     setHtml(treeToHtml(ast));
@@ -206,7 +192,6 @@ export default function TextEditor(): JSX.Element {
           isUnderline = false;
         }
 
-        // TODO: FIX BUG
         if (typeof sameColor === 'undefined') {
           sameColor = getColorHEXFromStyle(char.style.find(charStyle => isColorStyle(charStyle)) || '');
         } else {
@@ -222,11 +207,18 @@ export default function TextEditor(): JSX.Element {
       if (isUnderline) setItalic(true);
       if (sameColor) {
         setColor(sameColor as string);
-      } else {
-        setColor(DEFAULT_COLOR);
       }
     }
   }, [selectionRange]);
+
+  useEffect(() => {
+    if (selectionRange) return;
+    replaceCaret(inputRef.current);
+  });
+
+  const handleInput = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setText(event.target.innerText);
+  };
 
   const handleMouseUp = (event: React.MouseEvent) => {
     const selection = window?.getSelection();
@@ -361,6 +353,7 @@ export default function TextEditor(): JSX.Element {
     <div 
       id="text"
       className="text-input"
+      onInput={handleInput}
       onMouseUp={handleMouseUp}
       ref={inputRef}
       dangerouslySetInnerHTML={{

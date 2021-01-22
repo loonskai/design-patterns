@@ -1,5 +1,3 @@
-import sanitizeHtml from 'sanitize-html';
-
 type TextToTreeOptions = {
   [key: string]: string | boolean; 
 }
@@ -7,20 +5,30 @@ type TextToTreeOptions = {
 type UpdateASTOptions = {
   value: string | boolean;
   property: 'bold' | 'italic' | 'underline';
-  start: number;
-  end: number;
+  selectionRange: SelectionRange;
 }
 
 type UpdateASTColorOptions = {
   value: string;
+  selectionRange: SelectionRange;
+}
+
+type Char = {
+  value: string;
+  style: string[];
+}
+
+export type SelectionRange = {
   start: number;
   end: number;
 }
 
-export type Char = {
-  value: string;
-  style: string[];
-}
+const isColorStyle = (style: string): boolean => /^color-\#[0-9A-Fa-f]{6}$/.test(style);
+
+const getColorHEXFromStyle = (style: string): string => {
+  const [ hex ] = style.match(/\#[0-9A-Fa-f]{6}$/) || [];
+  return hex;
+}; 
 
 export const isSameStyle = (style1: string[], style2: string[]) => {
   if (!Array.isArray(style1) || !Array.isArray(style2) || style1.length !== style2.length) {
@@ -36,13 +44,6 @@ export const isSameStyle = (style1: string[], style2: string[]) => {
 
   return true;
 };
-
-export const isColorStyle = (style: string): boolean => /^color-\#[0-9A-Fa-f]{6}$/.test(style);
-
-export const getColorHEXFromStyle = (style: string): string => {
-  const [ hex ] = style.match(/\#[0-9A-Fa-f]{6}$/) || [];
-  return hex;
-}; 
 
 export const createElement = (chars: Char[]) => {
   const content = chars.reduce((acc, char) => acc + char.value, '');
@@ -75,7 +76,6 @@ export const textToTree = (
   ast: Char[] | null = null, 
   properties: TextToTreeOptions = {}
 ): Char[] => {
-  console.log(properties);
   return text.split('').map((char, idx) => ast && ast[idx] 
     ? ast[idx] 
     : { 
@@ -126,9 +126,9 @@ export const treeToHtml = (tree: Char[]) => {
   }, '');
 };
 
-export const updateASTStyles = (ast: Char[], { value, property, start, end }: UpdateASTOptions): Char[] => {
+export const transformStyleAST = (ast: Char[], { value, property, selectionRange }: UpdateASTOptions): Char[] => {
   const updatedAST = [...ast].map((char, idx) => {
-    if (idx >= start && idx < end) {
+    if (idx >= selectionRange.start && idx < selectionRange.end) {
       return {
         value: char.value,
         style: value 
@@ -141,8 +141,8 @@ export const updateASTStyles = (ast: Char[], { value, property, start, end }: Up
   return updatedAST;
 };
 
-export const updateASTColorStyles = (ast: Char[], { value, start, end } : UpdateASTColorOptions): Char[] => [...ast].map((char, idx) => {
-  if (idx >= start && idx < end) {
+export const transformColorStyleAST = (ast: Char[], { value, selectionRange } : UpdateASTColorOptions): Char[] => [...ast].map((char, idx) => {
+  if (idx >= selectionRange.start && idx < selectionRange.end) {
     if (!char.style.some(charStyle => isColorStyle(charStyle))) {
       return {
         value: char.value,
@@ -159,15 +159,6 @@ export const updateASTColorStyles = (ast: Char[], { value, start, end } : Update
     };
   }
   return char;
-});
-
-export const getSanitized = (html: string) => ({
-  __html: sanitizeHtml(html, {
-    allowedTags: ['span'],
-    allowedAttributes: {
-      span: ['style']
-    }
-  })
 });
 
 export const replaceCaret = (element: HTMLElement): void => {
@@ -228,3 +219,46 @@ export const getSelectionRangeValues = (containerElement: HTMLElement) => {
   return { start, end };
 };
 
+export const getCommonSelectedCharsStyle = (ast: Char[], selectionRange: SelectionRange) => {
+  let isBold = undefined as boolean | undefined;
+  let isItalic = undefined as boolean | undefined;
+  let isUnderline = undefined as boolean | undefined;
+  let sameColor = undefined as string | boolean | undefined;
+
+  const charsASTSelected = ast.slice(selectionRange.start, selectionRange.end);
+  charsASTSelected.forEach(char => {
+    if (isBold !== false && char.style.includes('bold')) {
+      isBold = true;
+    } else {
+      isBold = false;
+    }
+
+    if (isItalic !== false && char.style.includes('italic')) {
+      isItalic = true;
+    } else {
+      isItalic = false;
+    }
+
+    if (isUnderline !== false && char.style.includes('underline')) {
+      isUnderline = true;
+    } else {
+      isUnderline = false;
+    }
+
+    if (typeof sameColor === 'undefined') {
+      sameColor = getColorHEXFromStyle(char.style.find(charStyle => isColorStyle(charStyle)) || '');
+    } else {
+      const currentCharColor = getColorHEXFromStyle(char.style.find(charStyle => isColorStyle(charStyle)) || '');
+      if (sameColor !== currentCharColor) {
+        sameColor = false;
+      }
+    }
+  });
+
+  return {
+    isBold,
+    isItalic,
+    isUnderline,
+    sameColor
+  };
+};

@@ -1,6 +1,16 @@
 import React, { useState, useEffect, useRef, MutableRefObject } from 'react';
-import sanitizeHtml from 'sanitize-html';
 import EditorToolbar from './EditorToolbar';
+import {
+  textToTree,
+  treeToHtml,
+  getSelectionRangeValues,
+  isColorStyle,
+  getColorHEXFromStyle,
+  updateASTStyles,
+  updateASTColorStyles,
+  replaceCaret,
+  getSanitized
+} from './utils';
 import './TextEditor.css';
 import { Invoker } from '../../../patterns/behavioral/command';
 
@@ -11,150 +21,24 @@ type SelectionRange = {
 
 const DEFAULT_COLOR = '#000000';
 
-const isSameStyle = (style1: string[], style2: string[]) => {
-  if (!Array.isArray(style1) || !Array.isArray(style2) || style1.length !== style2.length) {
-    return false;
-  }
-
-  const sorted1 = [...style1].sort();
-  const sorted2 = [...style2].sort();
-
-  for (let i = 0; i < sorted1.length; i++) {
-    if (sorted1[i] !== sorted2[i]) return false;
-  }
-
-  return true;
-};
-
-type Char = {
-  value: string;
-  style: string[];
-}
-
-const isColorStyle = (style: string): boolean => /^color-\#[0-9A-Fa-f]{6}$/.test(style);
-const getColorHEXFromStyle = (style: string): string => {
-  const [ hex ] = style.match(/\#[0-9A-Fa-f]{6}$/) || [];
-  return hex;
-}; 
-
-const createElement = (chars: Char[]) => {
-  const content = chars.reduce((acc, char) => acc + char.value, '');
-  const { style: charStyles } = chars[0];
-  
-  const inlineEntries = Array.isArray(charStyles) 
-    ? charStyles.reduce((acc, style) => {
-      switch (style) {
-      case 'bold': return [...acc, ['font-weight', 'bold']];
-      case 'italic': return [...acc, ['font-style', 'italic']];
-      case 'underline': return [...acc, ['text-decoration', 'underline']];
-      default: {
-        if (isColorStyle(style)) {
-          return [...acc, ['color', getColorHEXFromStyle(style)]];
-        }
-        return acc;
-      }}
-    }, [] as any) : [];
-
-  const inlineString = inlineEntries
-    .map(([attribute, value]: string[]) => `${attribute}:${value};`)
-    .join('');
-  const inlineStyleString = inlineString ? ` style="${inlineString}"` : '';
-
-  return `<span${inlineStyleString}>${content}</span>`;
-};
-
-type TextToTreeOptions = {
-  text: string;
-  ast: Char[] | null;
-}
-
-const textToTree = ({ text, ast }: TextToTreeOptions) => 
-  text.split('').map((char, idx) => ast && ast[idx] 
-    ? ast[idx] 
-    : { value: char, style: [] as string[] }
-  );
-
-const treeToHtml = (tree: Char[]) => {
-  const transBuffer = [] as Array<Char[]>;
-
-  let buffer = [] as Char[];
-  tree.forEach((char, idx) => {
-    const lastInBuffer = buffer[buffer.length - 1];
-    if (lastInBuffer) {
-      const same = isSameStyle(lastInBuffer.style, char.style);
-      if (same) {
-        buffer.push(char);
-      } else {
-        transBuffer.push(buffer);
-        buffer = [char];
-      }
-    } else {
-      buffer.push(char);
-    }
-    
-    if (idx === tree.length - 1) {
-      transBuffer.push(buffer);
-    }
-  });
-
-  return transBuffer.reduce((acc, chars) => {
-    return acc + createElement(chars);
-  }, '');
-};
-
-type UpdateASTOptions = {
-  value: boolean;
-  property: 'bold' | 'italic' | 'underline';
-  start: number;
-  end: number;
-}
-
-const updateAST = (ast: Char[], { value, property, start, end }: UpdateASTOptions): Char[] => {
-  const updatedAST = [...ast].map((char, idx) => {
-    if (idx >= start && idx < end) {
-      return {
-        value: char.value,
-        style: value 
-          ? [...new Set([...char.style, property])]
-          : char.style.filter(charStyle => charStyle !== property)
-      };
-    }
-    return char;
-  });
-  return updatedAST;
-};
-
-const replaceCaret = (element: HTMLElement) => {
-  const target = document.createTextNode('');
-  element.appendChild(target);
-
-  const isTargetFocused = document.activeElement === element;
-  if (target !== null && target.nodeValue !== null && isTargetFocused) {
-    const selection = window.getSelection();
-    if (selection !== null) {
-      const range = document.createRange();
-      range.setStart(target, target.nodeValue.length);
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    }
-    if (element instanceof HTMLElement) element.focus();
-  }
-};
- 
 export default function TextEditor(): JSX.Element {
   const inputRef = useRef() as MutableRefObject<HTMLDivElement>;
-  const [text, setText] = useState('');
-  const [ast, setAST] = useState(textToTree({ text, ast: null }));
-  const [html, setHtml] = useState(treeToHtml(ast));
-  const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
   const [color, setColor] = useState(DEFAULT_COLOR);
   const [bold, setBold] = useState(false);
   const [italic, setItalic] = useState(false);
   const [underline, setUnderline] = useState(false);
+  const [text, setText] = useState('');
+  const [ast, setAST] = useState(textToTree(text));
+  const [html, setHtml] = useState(treeToHtml(ast));
+  const [selectionRange, setSelectionRange] = useState<SelectionRange | null>(null);
 
   useEffect(() => {
-    setAST(textToTree({ text, ast }));
+    setAST(textToTree(text, ast, {
+      color,
+      bold,
+      italic,
+      underline
+    }));
   }, [text]);
 
   useEffect(() => {
@@ -220,95 +104,28 @@ export default function TextEditor(): JSX.Element {
     setText(event.target.innerText);
   };
 
-  const handleMouseUp = (event: React.MouseEvent) => {
-    const selection = window?.getSelection();
-    if (selection?.toString()) {
-      const { 
-        startContainer,
-        endContainer,
-        startOffset, 
-        endOffset 
-      } = selection.getRangeAt(0);
-
-      const containerElement = inputRef.current;
-      const startNode = startContainer.parentNode;
-      const endNode = endContainer.parentNode;
-
-      let totalOffset = 0;
-      let start = 0;
-      let end = 0;
-      let startReached = false;
-
-      if (containerElement && containerElement.hasChildNodes()) {
-        for (let i = 0; containerElement.childNodes.length > i; i++) {
-          const childNode = containerElement.childNodes[i] as any;
-          const { length } = childNode.textContent;
-          const isStartNode = childNode === startNode;
-          const isEndNode = childNode === endNode;
-
-          if (isStartNode && !startReached) {
-            startReached = true;
-            start = totalOffset + startOffset;
-          }
-
-          if (isEndNode) {
-            end = totalOffset + endOffset;
-            break;
-          }
-
-          totalOffset += length;
-        }
-
-        setSelectionRange({ start, end });
-      }
-    } else {
-      setSelectionRange(null);
-    }
+  const handleMouseUp = () => {
+    setSelectionRange(getSelectionRangeValues(inputRef.current));
   };
 
-  const updateColor = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setColor(event.target.value);
-  };
-
-  const updateItalic = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setItalic(!italic);
-  };
-
-  const updateUnderline = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setUnderline(!underline);
-  };
-
-  const updateFontWeight = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setBold(!bold);
-  };
+  const updateColor = (event: React.ChangeEvent<HTMLInputElement>) => setColor(event.target.value);
+  const updateItalic = () => setItalic(!italic);
+  const updateUnderline = () => setUnderline(!underline);
+  const updateFontWeight = () => setBold(!bold);
 
   useEffect(() => {
     if (!selectionRange) return;
-    const updatedAST = [...ast].map((char, idx) => {
-      if (idx >= selectionRange.start && idx < selectionRange.end) {
-        if (!char.style.some(charStyle => isColorStyle(charStyle))) {
-          return {
-            value: char.value,
-            style: [...char.style, `color-${color}`]
-          };
-        }
-        return {
-          value: char.value,
-          style: char.style.map(
-            charStyle => isColorStyle(charStyle)
-              ? charStyle.replace(/\#[0-9A-Fa-f]{6}/, color) 
-              : charStyle
-          )
-        };
-      }
-      return char;
+    const updatedAST = updateASTColorStyles(ast, {
+      start: selectionRange.start,
+      end: selectionRange.end,
+      value: color
     });
     setAST(updatedAST);
   }, [color]);
 
   useEffect(() => {
     if (!selectionRange) return;
-    const updatedAST = updateAST(ast, {
+    const updatedAST = updateASTStyles(ast, {
       value: bold,
       property: 'bold', 
       start: selectionRange.start, 
@@ -319,7 +136,7 @@ export default function TextEditor(): JSX.Element {
 
   useEffect(() => {
     if (!selectionRange) return;
-    const updatedAST = updateAST(ast, {
+    const updatedAST = updateASTStyles(ast, {
       value: italic,
       property: 'italic', 
       start: selectionRange.start, 
@@ -330,7 +147,7 @@ export default function TextEditor(): JSX.Element {
 
   useEffect(() => {
     if (!selectionRange) return;
-    const updatedAST = updateAST(ast, {
+    const updatedAST = updateASTStyles(ast, {
       value: underline,
       property: 'underline', 
       start: selectionRange.start, 
@@ -356,14 +173,7 @@ export default function TextEditor(): JSX.Element {
       onInput={handleInput}
       onMouseUp={handleMouseUp}
       ref={inputRef}
-      dangerouslySetInnerHTML={{
-        __html: sanitizeHtml(html, {
-          allowedTags: ['span'],
-          allowedAttributes: {
-            span: ['style']
-          }
-        })
-      }}
+      dangerouslySetInnerHTML={getSanitized(html)}
       contentEditable
       suppressContentEditableWarning
     />

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ElementStyleBuilder } from '../patterns/creational/builder';
+import { ElementStyleBuilder } from '../../patterns/creational/builder';
 
 export default function BuilderPage(): JSX.Element {
   const style = new ElementStyleBuilder()

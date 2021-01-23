@@ -1,0 +1,9 @@
+.navigation {
+  background-color: #2E343D;
+  padding: 20px;
+  height: calc(100vh - 40px);
+}
+
+.navigation a {
+  color: #e06c75;
+}

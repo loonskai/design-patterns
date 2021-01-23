@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { WriteFileForm, WriteFileOptions } from '../components/pattern-pages/decorator/WriteFileForm';
+import { WriteFileForm, WriteFileOptions } from '../../components/pattern-pages/decorator/WriteFileForm';
 
 const initialValues = {
   text: '',

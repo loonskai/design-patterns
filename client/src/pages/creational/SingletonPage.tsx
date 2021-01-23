@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { DatabaseSingleton } from '../patterns/creational/singleton';
-import { JSONStringDebugger } from '../components/pattern-pages/singleton/JSONStringDebugger';
+import { DatabaseSingleton } from '../../patterns/creational/singleton';
+import { JSONStringDebugger } from '../../components/pattern-pages/singleton/JSONStringDebugger';
 
 export default function SingletonPage(): JSX.Element {
   const [_, setUpdated] = useState({});

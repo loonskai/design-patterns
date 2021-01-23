@@ -1,64 +1,89 @@
 import React from 'react';
-import {
-  BrowserRouter,
-  Switch,
-  Route,
-} from 'react-router-dom';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import Navigation from './components/Navigation';
-import HomePage from './pages/HomePage';
-import AbstractFactoryPage from './pages/AbstractFactoryPage';
-import BuilderPage from './pages/BuilderPage';
-import SingletonPage from './pages/SingletonPage';
-import AdapterPage from './pages/AdapterPage';
-import BridgePage from './pages/BridgePage';
-import DecoratorPage from './pages/DecoratorPage';
-import FacadePage from './pages/FacadePage';
-import FlyweightPage from './pages/FlyweightPage';
-import ProxyPage from './pages/ProxyPage';
-import ChainOfResponsibilityPage from './pages/ChainOfResponsibilityPage';
-import CommandPage from './pages/CommandPage';
+import PageRoute from './pages/PageRoute';
+import AbstractFactoryPage from './pages/creational/AbstractFactoryPage';
+import BuilderPage from './pages/creational/BuilderPage';
+import SingletonPage from './pages/creational/SingletonPage';
+import AdapterPage from './pages/structural/AdapterPage';
+import BridgePage from './pages/structural/BridgePage';
+import DecoratorPage from './pages/structural/DecoratorPage';
+import FacadePage from './pages/structural/FacadePage';
+import FlyweightPage from './pages/structural/FlyweightPage';
+import ProxyPage from './pages/structural/ProxyPage';
+import ChainOfResponsibilityPage from './pages/behavioral/ChainOfResponsibilityPage';
+import CommandPage from './pages/behavioral/CommandPage';
+import IteratorPage from './pages/behavioral/IteratorPage';
+import MediatorPage from './pages/behavioral/MediatorPage';
+import MementoPage from './pages/behavioral/MementoPage';
+import ObserverPage from './pages/behavioral/ObserverPage';
+import StatePage from './pages/behavioral/StatePage';
+import StrategyPage from './pages/behavioral/StrategyPage';
+import TemplateMethodPage from './pages/behavioral/TemplateMethodPage';
+import VisitorPage from './pages/behavioral/VisitorPage';
 
 export default function Router(): JSX.Element {
   return (
     <BrowserRouter>
       <Navigation />
       <Switch>
-        <Route path="/" exact>
-          <HomePage />
-        </Route>
-        <Route path="/abstract-factory" exact>
+        <PageRoute path="/abstract-factory">
           <AbstractFactoryPage />
-        </Route>
-        <Route path="/builder">
+        </PageRoute>
+        <PageRoute path="/builder">
           <BuilderPage />
-        </Route>
-        <Route path="/singleton">
+        </PageRoute>
+        <PageRoute path="/singleton">
           <SingletonPage />
-        </Route>
-        <Route path="/adapter">
+        </PageRoute>
+        <PageRoute path="/adapter">
           <AdapterPage />
-        </Route>
-        <Route path="/bridge">
+        </PageRoute>
+        <PageRoute path="/bridge">
           <BridgePage />
-        </Route>
-        <Route path="/decorator">
+        </PageRoute>
+        <PageRoute path="/decorator">
           <DecoratorPage />
-        </Route>
-        <Route path="/facade">
+        </PageRoute>
+        <PageRoute path="/facade">
           <FacadePage />
-        </Route>
-        <Route path="/flyweight">
+        </PageRoute>
+        <PageRoute path="/flyweight">
           <FlyweightPage />
-        </Route>
-        <Route path="/proxy">
+        </PageRoute>
+        <PageRoute path="/proxy">
           <ProxyPage />
-        </Route>
-        <Route path="/chain-of-responsibility">
+        </PageRoute>
+        <PageRoute path="/chain-of-responsibility">
           <ChainOfResponsibilityPage />
-        </Route>
-        <Route path="/command">
+        </PageRoute>
+        <PageRoute path="/command">
           <CommandPage />
-        </Route>
+        </PageRoute>
+        <PageRoute path="/iterator">
+          <IteratorPage />
+        </PageRoute>
+        <PageRoute path="/mediator">
+          <MediatorPage />
+        </PageRoute>
+        <PageRoute path="/memento">
+          <MementoPage />
+        </PageRoute>
+        <PageRoute path="/observer">
+          <ObserverPage />
+        </PageRoute>
+        <PageRoute path="/state">
+          <StatePage />
+        </PageRoute>
+        <PageRoute path="/strategy">
+          <StrategyPage />
+        </PageRoute>
+        <PageRoute path="/template-method">
+          <TemplateMethodPage />
+        </PageRoute>
+        <PageRoute path="/visitor">
+          <VisitorPage />
+        </PageRoute>
       </Switch>
     </BrowserRouter>
   );

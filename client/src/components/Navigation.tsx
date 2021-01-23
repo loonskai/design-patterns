@@ -4,9 +4,8 @@ import './Navigation.css';
 
 export default function Navigation(): JSX.Element {
   return (
-    <header>
+    <header className="navigation">
       <nav>
-        <NavLink to="/">Home</NavLink>
         <div>
             Creational patterns
           <ul>
@@ -31,6 +30,14 @@ export default function Navigation(): JSX.Element {
           <ul>
             <li><NavLink to="/chain-of-responsibility">Chain of Responsibility</NavLink></li>
             <li><NavLink to="/command">Command</NavLink></li>
+            <li><NavLink to="/iterator">Iterator</NavLink></li>
+            <li><NavLink to="/mediator">Mediator</NavLink></li>
+            <li><NavLink to="/memento">Memento</NavLink></li>
+            <li><NavLink to="/observer">Observer</NavLink></li>
+            <li><NavLink to="/state">State</NavLink></li>
+            <li><NavLink to="/strategy">Strategy</NavLink></li>
+            <li><NavLink to="/template-method">Template Method</NavLink></li>
+            <li><NavLink to="/visitor">Visitor</NavLink></li>
           </ul>
         </div>
       </nav>

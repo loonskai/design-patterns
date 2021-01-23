@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { GUIAbstractFactory, PlatformButton } from '../patterns/creational/abstract-factory';
-import { WinUIFactory } from '../patterns/creational/abstract-factory/WinUIFactory';
-import { MacUIFactory } from '../patterns/creational/abstract-factory/MacUIFactory';
+import { GUIAbstractFactory, PlatformButton } from '../../patterns/creational/abstract-factory';
+import { WinUIFactory } from '../../patterns/creational/abstract-factory/WinUIFactory';
+import { MacUIFactory } from '../../patterns/creational/abstract-factory/MacUIFactory';
 
 const PLATFORM_TYPES = {
   MACOS: 'MACOS',

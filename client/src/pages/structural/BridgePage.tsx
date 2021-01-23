@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { FormatTypes, ReportTypes } from '../patterns/structural/bridge';
-import { ReportForm, FormItemElement } from '../components/pattern-pages/bridge/ReportForm';
-import { ReportData } from '../patterns/structural/bridge/reports';
-import { DailyReport } from '../patterns/structural/bridge/reports/DailyReport';
-import { MonthlyReport } from '../patterns/structural/bridge/reports/MonthlyReport';
-import { YearlyReport } from '../patterns/structural/bridge/reports/YearlyReport';
-import { PDFDocument } from '../patterns/structural/bridge/documents/PDFDocument';
-import { WordDocument } from '../patterns/structural/bridge/documents/WordDocument';
-import { ExcelDocument } from '../patterns/structural/bridge/documents/ExcelDocument';
+import { FormatTypes, ReportTypes } from '../../patterns/structural/bridge';
+import { ReportForm, FormItemElement } from '../../components/pattern-pages/bridge/ReportForm';
+import { ReportData } from '../../patterns/structural/bridge/reports';
+import { DailyReport } from '../../patterns/structural/bridge/reports/DailyReport';
+import { MonthlyReport } from '../../patterns/structural/bridge/reports/MonthlyReport';
+import { YearlyReport } from '../../patterns/structural/bridge/reports/YearlyReport';
+import { PDFDocument } from '../../patterns/structural/bridge/documents/PDFDocument';
+import { WordDocument } from '../../patterns/structural/bridge/documents/WordDocument';
+import { ExcelDocument } from '../../patterns/structural/bridge/documents/ExcelDocument';
 
 const initialValues = {
   'first-name': '',

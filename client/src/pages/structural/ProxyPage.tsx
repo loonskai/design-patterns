@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { CacheProxy, API } from '../patterns/structural/proxy/classic';
-import { cacheProxy } from '../patterns/structural/proxy/es6';
+import { CacheProxy, API } from '../../patterns/structural/proxy/classic';
+import { cacheProxy } from '../../patterns/structural/proxy/es6';
 
 export default function ProxyPage(): JSX.Element {
   /* Classic OOP implementation */

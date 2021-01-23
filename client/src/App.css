@@ -1,9 +1,16 @@
+html, body {
+  height: 100vh;
+  padding: 0;
+  margin: 0;
+}
+
 body {
   background-color: #282c34;
   color: #ffffff;
   font-family: 'Nunito', sans-serif;
 }
 
-h1 {
-  color: #ffffff;
+#root {
+  display: flex;
+  flex-wrap: wrap;
 }

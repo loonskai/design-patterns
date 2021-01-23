@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StorageTypes, StorageAdapter } from '../patterns/structural/adapter';
+import { StorageTypes, StorageAdapter } from '../../patterns/structural/adapter';
 
 export default function AdapterPage(): JSX.Element {
   const [newTodoItem, setNewTodoItem] = useState<string>('');

@@ -12,7 +12,7 @@ export default function Navigation(): JSX.Element {
             <li className="navigation-link">
               <NavLink to="/factory-method">Factory Method</NavLink>
             </li>
-            <li className="navigation-link">
+            <li className="navigation-link navigation-link__in-progress">
               <NavLink to="/abstract-factory">Abstract Factory</NavLink>
             </li>
             <li className="navigation-link">

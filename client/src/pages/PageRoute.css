@@ -11,5 +11,5 @@ pre.code {
   font-size: 14px;
   max-width: 800px;
   height: 400px;
-  overflow: scroll;
+  overflow-y: scroll;
 }

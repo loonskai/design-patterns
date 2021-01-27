@@ -9,12 +9,12 @@ const getRoleInstance = (type: string): RoleInstance => {
   switch (type) {
   case ROLE_TYPES.customer: return {
     getUsers() {
-      return USERS.filter(({ name, username, ...toExclude }) => ({ name, username }));
+      return USERS.map(({ name, username, ...toExclude }) => ({ name, username }));
     }
   };
   case ROLE_TYPES.moderator: return {
     getUsers() {
-      return USERS.filter(({ name, username, email, phone, ...toExclude }) => ({
+      return USERS.map(({ name, username, email, phone, ...toExclude }) => ({
         name, username, email, phone
       }));
     }

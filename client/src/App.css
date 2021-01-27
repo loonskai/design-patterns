@@ -5,7 +5,7 @@ html, body {
 }
 
 body {
-  background-color: #282c34;
+  background-color: #20252B;
   color: #ffffff;
   font-family: 'Nunito', sans-serif;
 }
@@ -13,4 +13,9 @@ body {
 #root {
   display: flex;
   flex-wrap: wrap;
+}
+
+@font-face {
+  font-family: 'LucidaGrande';
+  src: local('LucidaGrande'), url('./fonts/LucidaGrande.woff') format('woff');
 }

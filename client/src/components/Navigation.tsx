@@ -10,6 +10,9 @@ export default function Navigation(): JSX.Element {
             Creational patterns
           <ul>
             <li className="navigation-link">
+              <NavLink to="/factory-method">Factory Method</NavLink>
+            </li>
+            <li className="navigation-link">
               <NavLink to="/abstract-factory">Abstract Factory</NavLink>
             </li>
             <li className="navigation-link">
@@ -28,6 +31,9 @@ export default function Navigation(): JSX.Element {
             </li>
             <li className="navigation-link">
               <NavLink to="/bridge">Bridge</NavLink>
+            </li>
+            <li className="navigation-link navigation-link__todo">
+              <NavLink to="/composite">Composite</NavLink>
             </li>
             <li className="navigation-link">
               <NavLink to="/decorator">Decorator</NavLink>

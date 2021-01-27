@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { GUIAbstractFactory, PlatformButton } from '../../patterns/creational/abstract-factory';
+import React, { useEffect, useState, Suspense } from 'react';
+import { GUIAbstractFactory, PlatformButton, PlatformCheckbox } from '../../patterns/creational/abstract-factory';
 import { WinUIFactory } from '../../patterns/creational/abstract-factory/WinUIFactory';
 import { MacUIFactory } from '../../patterns/creational/abstract-factory/MacUIFactory';
 
@@ -8,10 +8,16 @@ const PLATFORM_TYPES = {
   WINDOWS: 'WINDOWS',
 };
 
+type Sandbox = {
+  button: PlatformButton;
+  checkbox: PlatformCheckbox;
+}
+
+// TODO: Lazy load components by componentPath
 export default function AbstractFactoryPage(): JSX.Element {
   const [platform, setPlatform] = useState(PLATFORM_TYPES.MACOS);
   const [factory, setFactory] = useState<GUIAbstractFactory | null>(null);
-  const [buttons, setButtons] = useState<PlatformButton[]>([]);
+  const [sandboxes, setSandboxes] = useState<Sandbox[]>([]);
 
   useEffect(() => {
     switch (platform) {
@@ -28,10 +34,11 @@ export default function AbstractFactoryPage(): JSX.Element {
   }, [platform]);
 
   const createUI = () => {
-    if (factory) {
-      const newButton = factory?.createButton();
-      setButtons([...buttons, newButton]);
-    }
+    if (!factory) return;
+    setSandboxes([...sandboxes, {
+      button: factory.createButton(),
+      checkbox: factory.createCheckbox()
+    }]);
   };
 
   return (
@@ -45,8 +52,19 @@ export default function AbstractFactoryPage(): JSX.Element {
         <button type="button" onClick={createUI} defaultValue={platform}>Create UI</button>
       </div>
       <div>
-        Items:
-        {buttons.map(button => button.paint())}
+        {sandboxes.map(({ button, checkbox }) => {
+          const Button = React.lazy(() => import(button.componentPath));
+          return (
+            <Suspense fallback={<div>Loading...</div>}>
+              <label htmlFor={checkbox.id}>{checkbox.getLabel()}</label>
+              <input type="checkbox" id={checkbox.id} />
+              <Button />
+              {/* <button style={button.getStyles()} onClick={button.onClick}>
+                {button.getText()}
+              </button> */}
+            </Suspense>
+          );
+        })}
       </div>
     </div>
   );

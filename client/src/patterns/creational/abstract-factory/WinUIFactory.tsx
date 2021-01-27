@@ -1,19 +1,36 @@
-import React from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import { GUIAbstractFactory, PlatformCheckbox, PlatformButton } from './index';
 
 class WinCheckbox implements PlatformCheckbox {
-  paint() {
-    console.log('paint win checkbox');
+  public id = uuidv4();
+
+  public getStyles() {
+    return {
+      backgroundColor: 'red'
+    };
+  }
+
+  public getLabel() {
+    return 'Win Checkbox';
   }
 }
 
 class WinButton implements PlatformButton {
-  handleClick() {
+  public id = uuidv4();
+  public componentPath = '../../components/pattern-pages/abstract-factory/WinButton.tsx'
+
+  public onClick() {
     console.log('this is win');
   }
 
-  paint() {
-    return <button>WinButton</button>;
+  public getStyles() {
+    return {
+      border: '2px solid red'
+    };
+  }
+
+  public getText() {
+    return 'Windows Button';
   }
 }
 

@@ -2,11 +2,13 @@ import React from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 import Navigation from './components/Navigation';
 import PageRoute from './pages/PageRoute';
+import FactoryMethodPage from './pages/creational/FactoryMethodPage';
 import AbstractFactoryPage from './pages/creational/AbstractFactoryPage';
 import BuilderPage from './pages/creational/BuilderPage';
 import SingletonPage from './pages/creational/SingletonPage';
 import AdapterPage from './pages/structural/AdapterPage';
 import BridgePage from './pages/structural/BridgePage';
+import CompositePage from './pages/structural/CompositePage';
 import DecoratorPage from './pages/structural/DecoratorPage';
 import FacadePage from './pages/structural/FacadePage';
 import FlyweightPage from './pages/structural/FlyweightPage';
@@ -27,6 +29,9 @@ export default function Router(): JSX.Element {
     <BrowserRouter>
       <Navigation />
       <Switch>
+        <PageRoute path="/factory-method">
+          <FactoryMethodPage />
+        </PageRoute>
         <PageRoute path="/abstract-factory">
           <AbstractFactoryPage />
         </PageRoute>
@@ -41,6 +46,9 @@ export default function Router(): JSX.Element {
         </PageRoute>
         <PageRoute path="/bridge">
           <BridgePage />
+        </PageRoute>
+        <PageRoute path="/composite">
+          <CompositePage />
         </PageRoute>
         <PageRoute path="/decorator">
           <DecoratorPage />

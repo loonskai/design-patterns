@@ -1,7 +1,7 @@
 .navigation {
   background-color: #2E343D;
   padding: 20px 100px 20px 20px;
-  height: calc(100vh - 40px);
+  min-height: calc(100vh - 40px);
 }
 
 .navigation-link {

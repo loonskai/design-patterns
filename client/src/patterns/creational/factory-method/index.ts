@@ -1,44 +1,60 @@
-export abstract class Creator {
-  public abstract factoryMethod(): Product;
+type User = Record<string, unknown>;
+interface RoleInstance {
+  users: User[];
+	getUsers(): User[];
+}
 
-  public doSomething(): string {
-    const product = this.factoryMethod();
+class AdminRole implements RoleInstance {
+  users = [];
 
-    return product.runTask();
+  public getUsers(): User[] {
+    return this.users.filter(user => ({ /* filter information for admin */ }));
   }
 }
 
-class FirstConcreteCreator extends Creator {
-  public factoryMethod(): Product {
-    return new FirstConcreteProduct();
+class ModeratorHelper implements RoleInstance {
+  users = [];
+
+  public getUsers(): User[] {
+    return this.users.filter(user => ({ /* filter information for moderator */ }));
   }
 }
 
-class SecondConcreteCreator extends Creator {
-  public factoryMethod(): Product {
-    return new SecondConcreteProduct();
+class CustomerHelper implements RoleInstance {
+  users = [];
+
+  public getUsers(): User[] {
+    return this.users.filter(user => ({ /* filter information for customer */ }));
   }
 }
 
-interface Product {
-  runTask(): string;
+abstract class RoleCreator {
+	public abstract getRoleInstance(): RoleInstance;
 }
 
-class FirstConcreteProduct implements Product {
-  public runTask(): string {
-    return 'Run FirstConcreteProduct task';
+class AdminRoleCreator extends RoleCreator {
+  public getRoleInstance() {
+    return new AdminRole();
   }
 }
 
-class SecondConcreteProduct implements Product {
-  public runTask(): string {
-    return 'Run SecondConcreteProduct task';
+class ModeratorRoleCreator extends RoleCreator {
+  public getRoleInstance() {
+    return new ModeratorHelper();
   }
 }
 
-function clientCode(creator: Creator) {
-  console.log(creator.doSomething());
+class CustomerRoleCreator extends RoleCreator {
+  public getRoleInstance() {
+    return new CustomerHelper();
+  }
 }
 
-clientCode(new FirstConcreteCreator());
-clientCode(new SecondConcreteCreator());
+function clientCode(roleCreator: RoleCreator) {
+  const userHelper = roleCreator.getRoleInstance();
+  console.log(userHelper.getUsers());
+}
+
+clientCode(new AdminRoleCreator()); // [ /* admin filtered posts */]
+clientCode(new ModeratorRoleCreator()); // [ /* moderator filtered posts */]
+clientCode(new CustomerRoleCreator()); // [ /* moderator filtered posts */]

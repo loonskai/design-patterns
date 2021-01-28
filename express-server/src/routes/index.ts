@@ -3,16 +3,21 @@ import { FileDataSource } from '../../patterns/structural/decorator/classic/File
 import { CompressionDecorator } from '../../patterns/structural/decorator/classic/CompressionDecorator';
 import { EncryptionDecorator } from '../../patterns/structural/decorator/classic/EncryptionDecorator';
 import { FileDataSourceWithDecorators } from '../../patterns/structural/decorator/typescript';
+import { Todo } from '../models/Todo';
 
 const router = Router();
 
 router.get('/todos', async (req, res) => {
-  res.send([]);
+  const todos = await Todo.find();
+  res.send(todos);
 });
 
 router.post('/todos', async (req, res: any) => {
   const { value } = req.body;
-  res.send(value);
+  if (!value) return res.status(400).send('Invalid value');
+
+  const todo = await Todo.create({ value });
+  res.send(todo);
 });
 
 router.post('/files', async (req, res) => {

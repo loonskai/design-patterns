@@ -13,6 +13,7 @@ export default function AdapterPage(): JSX.Element {
   
   const submitTodo = async () => {
     await storage?.add(newTodoItem);
+    setNewTodoItem('');
   };
   
   useEffect(() => {
@@ -25,7 +26,7 @@ export default function AdapterPage(): JSX.Element {
       setTodos(data || []);
     };
     fetchData();
-  }, [storage]);
+  }, [storage, newTodoItem]);
 
   return (
     <div>

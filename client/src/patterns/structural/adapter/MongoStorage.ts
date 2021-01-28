@@ -2,11 +2,20 @@ import axios from 'axios';
 
 export class MongoStorage {
   async post(data: string): Promise<void> {
-    await axios.post('http://localhost:5000/todos', { value: data });
+    try {
+      await axios.post('http://localhost:5000/todos', { value: data });
+    } catch (err) {
+      console.error(err);
+    }
   }
-
+  
   async fetchAll(): Promise<string[]> {
-    const { data } = await axios.get('http://localhost:5000/todos');
-    return data;
+    try {
+      const { data } = await axios.get('http://localhost:5000/todos');
+      return data.map(({ value }: { value: string }) => value);
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
   }
 }

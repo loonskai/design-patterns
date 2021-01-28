@@ -16,17 +16,19 @@ type Props = {
 export const WriteFileForm = ({ handleInputChange, write, formValues }: Props): JSX.Element => {
   return <form onSubmit={write}>
     <div>
-      <textarea name="text" onChange={handleInputChange} value={formValues.text}/>
+      <label htmlFor="text">Text: </label><br/>
+      <textarea id="text" name="text" onChange={handleInputChange} value={formValues.text}/>
     </div>
     <div>
-      <label htmlFor="fileName">Filename: </label>
+      <label htmlFor="fileName">Filename: </label><br/>
       <input type="text" name="fileName" onChange={handleInputChange} value={formValues.fileName}/>
     </div>
     <div>
-      <label htmlFor="compress">Compress</label>
       <input id="compress" name="compress" onChange={handleInputChange} type="checkbox" checked={formValues.compress} />
-      <label htmlFor="encrypt">Encrypt</label>
+      <label htmlFor="compress">Compress</label>
+      <br/>
       <input id="encrypt" name="encrypt" onChange={handleInputChange} type="checkbox" checked={formValues.encrypt} />
+      <label htmlFor="encrypt">Encrypt</label>
     </div>
     <button type="submit">Write</button>
   </form>;

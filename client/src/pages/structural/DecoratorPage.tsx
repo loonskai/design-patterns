@@ -3,8 +3,8 @@ import axios from 'axios';
 import { WriteFileForm, WriteFileOptions } from '../../components/pattern-pages/decorator/WriteFileForm';
 
 const initialValues = {
-  text: '',
-  fileName: '',
+  text: 'text to save',
+  fileName: 'test',
   compress: false,
   encrypt: false
 };
@@ -34,7 +34,11 @@ export default function DecoratorPage(): JSX.Element {
   return (
     <div>
       <h1>Decorator</h1>
-      <WriteFileForm formValues={formValues} handleInputChange={handleInputChange} write={write} />
+      <WriteFileForm 
+        formValues={formValues} 
+        handleInputChange={handleInputChange} 
+        write={write} 
+      />
     </div>
   );
 }

@@ -41,12 +41,12 @@ export default function Navigation(): JSX.Element {
             {/* <li className="navigation-link navigation-link__todo">
               <NavLink to="/facade">Facade</NavLink>
             </li> */}
-            <li className="navigation-link">
+            {/* <li className="navigation-link navigation-link__todo">
               <NavLink to="/flyweight">Flyweight</NavLink>
-            </li>
-            <li className="navigation-link">
+            </li> */}
+            {/* <li className="navigation-link navigation-link__in-progress">
               <NavLink to="/proxy">Proxy</NavLink>
-            </li>
+            </li> */}
           </ul>
         </div>
         <div>

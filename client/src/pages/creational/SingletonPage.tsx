@@ -1,31 +1,41 @@
 import React, { useEffect, useState } from 'react';
-import { DatabaseSingleton } from '../../patterns/creational/singleton';
+import { StorageSingleton } from '../../patterns/creational/singleton';
 import { JSONStringDebugger } from '../../components/pattern-pages/singleton/JSONStringDebugger';
 
 export default function SingletonPage(): JSX.Element {
   const [_, setUpdated] = useState({});
-  const [newData, setNewData] = useState<string>('');
-  const firstInstance = DatabaseSingleton.getInstance();
-  const secondInstance = DatabaseSingleton.getInstance();
+  const [newData, setNewData] = useState<string>('{ "property": "value" }');
+
+  const storageFirst = StorageSingleton.getInstance();
+  const storageSecond = StorageSingleton.getInstance();
+
+  const onClickFirst = () => {
+    storageFirst.setData(newData);
+    setUpdated({});
+  };
+
+  const onClickSecond = () => {
+    storageSecond.setData(newData);
+    setUpdated({});
+  };
 
   useEffect(() => {
-    console.log(firstInstance.symbol === secondInstance.symbol);
+    /* Check if both instances are actually the same */
+    console.log(storageFirst.symbol === storageSecond.symbol);
   }, []);
 
   return (
     <div>
       <h1>Singleton</h1>
       <textarea name="db" id="db" cols={30} rows={10} value={newData} onChange={(e) => setNewData(e.target.value)}/>
-      <button onClick={() => {
-        firstInstance.setData(newData);
-        setUpdated({});
-      }}>Update data in the 1st instance</button>
-      <button onClick={() => {
-        secondInstance.setData(newData);
-        setUpdated({});
-      }}>Update data in the 2st instance</button>
-      <JSONStringDebugger name="1st instance" data={firstInstance.getData()} />
-      <JSONStringDebugger name="2nd instance" data={secondInstance.getData()} />
+      <div>
+        <button onClick={onClickFirst}>Update data in the 1st instance</button>
+      </div>
+      <div>
+        <button onClick={onClickSecond}>Update data in the 2st instance</button>
+      </div>
+      <JSONStringDebugger name="1st instance" data={storageFirst.getData()} />
+      <JSONStringDebugger name="2nd instance" data={storageSecond.getData()} />
     </div>
   );
 }

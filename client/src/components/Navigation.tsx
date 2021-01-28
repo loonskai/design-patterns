@@ -12,9 +12,9 @@ export default function Navigation(): JSX.Element {
             <li className="navigation-link">
               <NavLink to="/factory-method">Factory Method</NavLink>
             </li>
-            <li className="navigation-link navigation-link__in-progress">
+            {/* <li className="navigation-link navigation-link__in-progress">
               <NavLink to="/abstract-factory">Abstract Factory</NavLink>
-            </li>
+            </li> */}
             <li className="navigation-link">
               <NavLink to="/builder">Builder</NavLink>
             </li>
@@ -32,15 +32,15 @@ export default function Navigation(): JSX.Element {
             <li className="navigation-link">
               <NavLink to="/bridge">Bridge</NavLink>
             </li>
-            <li className="navigation-link navigation-link__todo">
+            {/* <li className="navigation-link navigation-link__todo">
               <NavLink to="/composite">Composite</NavLink>
-            </li>
+            </li> */}
             <li className="navigation-link">
               <NavLink to="/decorator">Decorator</NavLink>
             </li>
-            <li className="navigation-link navigation-link__todo">
+            {/* <li className="navigation-link navigation-link__todo">
               <NavLink to="/facade">Facade</NavLink>
-            </li>
+            </li> */}
             <li className="navigation-link">
               <NavLink to="/flyweight">Flyweight</NavLink>
             </li>
@@ -55,10 +55,10 @@ export default function Navigation(): JSX.Element {
             <li className="navigation-link">
               <NavLink to="/chain-of-responsibility">Chain of Responsibility</NavLink>
             </li>
-            <li className="navigation-link navigation-link__in-progress">
+            {/* <li className="navigation-link navigation-link__in-progress">
               <NavLink to="/command">Command</NavLink>
-            </li>
-            <li className="navigation-link navigation-link__todo">
+            </li> */}
+            {/* <li className="navigation-link navigation-link__todo">
               <NavLink to="/iterator">Iterator</NavLink>
             </li>
             <li className="navigation-link navigation-link__todo">
@@ -81,7 +81,7 @@ export default function Navigation(): JSX.Element {
             </li>
             <li className="navigation-link navigation-link__todo">
               <NavLink to="/visitor">Visitor</NavLink>
-            </li>
+            </li> */}
           </ul>
         </div>
       </nav>

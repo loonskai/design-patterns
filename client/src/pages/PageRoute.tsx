@@ -8,7 +8,6 @@ type Props = {
 }
 
 export default function PageRoute({ path, children }: Props): JSX.Element {
-  console.log(children);
   return (
     <Route path={path} exact>
       <main className="content">

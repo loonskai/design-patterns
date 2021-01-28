@@ -50,12 +50,14 @@ export default function AdapterPage(): JSX.Element {
       </div>
       <div>
         <label htmlFor="todo-item">Add new TODO</label>
-        <input 
-          type="text"
-          id="todo-item" 
-          value={newTodoItem} 
-          onChange={e => setNewTodoItem(e.target.value)}
-        />
+        <div>
+          <input 
+            type="text"
+            id="todo-item" 
+            value={newTodoItem} 
+            onChange={e => setNewTodoItem(e.target.value)}
+          />
+        </div>
         <button onClick={submitTodo}>Submit</button>
       </div>
       <ul>

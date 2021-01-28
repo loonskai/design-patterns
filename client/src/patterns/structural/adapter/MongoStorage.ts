@@ -1,8 +1,6 @@
 import axios from 'axios';
 
 export class MongoStorage {
-  constructor() {}
-
   async post(data: string): Promise<void> {
     await axios.post('http://localhost:5000/todos', { value: data });
   }

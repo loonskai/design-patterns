@@ -31,6 +31,7 @@ type ReportTypeDocumentData = {
 
 export type ReportDocument = ReportDocumentData & ReportTypeDocumentData
 
+/* Abstraction */
 export abstract class Report {
   protected document: DocumentFormat
 

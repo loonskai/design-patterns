@@ -15,23 +15,23 @@ export const ReportForm = ({ reportType, generateReport, handleInputChange, form
     <h2>{reportType} report</h2>
     <form onSubmit={generateReport}>
       <div>
-        <label htmlFor="first-name">First name:</label>
+        <label htmlFor="first-name">First name:</label><br/>
         <input id="first-name" name="first-name" type="text" onChange={handleInputChange} value={formValues['first-name']}/>
       </div>
       <div>
-        <label htmlFor="last-name">Last name:</label>
+        <label htmlFor="last-name">Last name:</label><br/>
         <input id="last-name" name="last-name" type="text" onChange={handleInputChange} value={formValues['last-name']}/>
       </div>
       <div>
-        <label htmlFor="planned">Tasks planned:</label>
+        <label htmlFor="planned">Tasks planned:</label><br/>
         <input id="planned" name="planned" type="number" onChange={handleInputChange} value={Number(formValues.planned)}/>
       </div>
       <div>
-        <label htmlFor="completed">Tasks completed:</label>
+        <label htmlFor="completed">Tasks completed:</label><br/>
         <input id="completed" name="completed" type="number" onChange={handleInputChange} value={Number(formValues.completed)}/>
       </div>
       <div>
-        <label htmlFor="comment">Comments</label>
+        <label htmlFor="comment">Comments</label><br/>
         <textarea id="comment" name="comment" onChange={handleInputChange} value={formValues.comment}/>
       </div>
       <button>Generate {reportType} Report</button>

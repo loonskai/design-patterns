@@ -61,7 +61,7 @@ export default function BridgePage(): JSX.Element {
     <div>
       <h1>Bridge</h1>
       <div>
-        <label htmlFor="format">Format:</label>
+        <label htmlFor="format">Format:</label><br />
         <select name="format" id="format" value={format} onChange={changeFormat}>
           <option value={FormatTypes.PDF}>PDF</option>
           <option value={FormatTypes.EXCEL}>Excel</option>
@@ -69,14 +69,19 @@ export default function BridgePage(): JSX.Element {
         </select>
       </div>
       <div>
-        <label htmlFor="report-type">Report Type:</label>
+        <label htmlFor="report-type">Report Type:</label><br />
         <select name="report-type" id="report-type" value={reportType} onChange={changeReportType}>
           <option value={ReportTypes.YEARLY}>Yearly</option>
           <option value={ReportTypes.MONTHLY}>Monthly</option>
           <option value={ReportTypes.DAILY}>Daily</option>
         </select>
       </div>
-      <ReportForm reportType={reportType} generateReport={generateReport} handleInputChange={handleInputChange} formValues={formValues}/>
+      <ReportForm 
+        reportType={reportType} 
+        generateReport={generateReport} 
+        handleInputChange={handleInputChange} 
+        formValues={formValues}
+      />
     </div>
   );
 }
